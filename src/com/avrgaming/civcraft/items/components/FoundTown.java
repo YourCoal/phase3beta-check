@@ -16,7 +16,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from AVRGAMING LLC.
  */
-package com.avrgaming.civcraft.items.components;
+package com.civcraft.items.components;
 
 import gpl.AttributeUtil;
 
@@ -25,14 +25,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import com.avrgaming.civcraft.exception.CivException;
-import com.avrgaming.civcraft.interactive.InteractiveTownName;
-import com.avrgaming.civcraft.main.CivGlobal;
-import com.avrgaming.civcraft.main.CivMessage;
-import com.avrgaming.civcraft.object.Resident;
-import com.avrgaming.civcraft.threading.TaskMaster;
-import com.avrgaming.civcraft.util.CallbackInterface;
-import com.avrgaming.civcraft.util.CivColor;
+import com.civcraft.exception.CivException;
+import com.civcraft.interactive.InteractiveTownName;
+import com.civcraft.main.CivGlobal;
+import com.civcraft.main.CivMessage;
+import com.civcraft.object.Resident;
+import com.civcraft.threading.TaskMaster;
+import com.civcraft.util.CallbackInterface;
+import com.civcraft.util.CivColor;
 
 public class FoundTown extends ItemComponent implements CallbackInterface {
 

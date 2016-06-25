@@ -1,4 +1,4 @@
-package com.avrgaming.civcraft.loreenhancements;
+package com.civcraft.loreenhancements;
 
 import gpl.AttributeUtil;
 
@@ -7,9 +7,9 @@ import java.util.HashMap;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
 
-import com.avrgaming.civcraft.main.CivData;
-import com.avrgaming.civcraft.object.BuildableDamageBlock;
-import com.avrgaming.civcraft.util.ItemManager;
+import com.civcraft.main.CivData;
+import com.civcraft.object.BuildableDamageBlock;
+import com.civcraft.util.ItemManager;
 
 public abstract class LoreEnhancement {
 	public AttributeUtil add(AttributeUtil attrs) {
@@ -23,8 +23,8 @@ public abstract class LoreEnhancement {
 		enhancements.put("LoreEnhancementSoulBound", new LoreEnhancementSoulBound());
 		enhancements.put("LoreEnhancementAttack", new LoreEnhancementAttack());
 		enhancements.put("LoreEnhancementDefense", new LoreEnhancementDefense());
-		enhancements.put("LoreEnhancementPunchout", new LoreEnhancementPunchout());
-		enhancements.put("LoreEnhancementArenaItem", new LoreEnhancementArenaItem());
+		enhancements.put("LoreEnhancementPunchoutI", new LoreEnhancementPunchoutI());
+		enhancements.put("LoreEnhancementPunchoutII", new LoreEnhancementPunchoutII());
 	}
 	
 	public boolean onDeath(PlayerDeathEvent event, ItemStack stack) { return false; }
@@ -94,6 +94,4 @@ public abstract class LoreEnhancement {
 	public double getLevel(AttributeUtil attrs) {	return 0; }
 	public abstract String serialize(ItemStack stack);
 	public abstract ItemStack deserialize(ItemStack stack, String data);
-	
-	
 }

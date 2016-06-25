@@ -1,16 +1,16 @@
-package com.avrgaming.civcraft.interactive;
+package com.civcraft.interactive;
 
 import java.io.IOException;
 
 import org.bukkit.entity.Player;
 
-import com.avrgaming.civcraft.exception.CivException;
-import com.avrgaming.civcraft.main.CivGlobal;
-import com.avrgaming.civcraft.main.CivMessage;
-import com.avrgaming.civcraft.object.Resident;
-import com.avrgaming.civcraft.structure.Buildable;
-import com.avrgaming.civcraft.threading.TaskMaster;
-import com.avrgaming.civcraft.util.CivColor;
+import com.civcraft.exception.CivException;
+import com.civcraft.main.CivGlobal;
+import com.civcraft.main.CivMessage;
+import com.civcraft.object.Resident;
+import com.civcraft.structure.Buildable;
+import com.civcraft.threading.TaskMaster;
+import com.civcraft.util.CivColor;
 
 public class InteractiveBuildableRefresh implements InteractiveResponse {
 

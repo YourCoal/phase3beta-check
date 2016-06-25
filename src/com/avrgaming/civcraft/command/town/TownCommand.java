@@ -16,7 +16,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from AVRGAMING LLC.
  */
-package com.avrgaming.civcraft.command.town;
+package com.civcraft.command.town;
 
 
 import java.text.DecimalFormat;
@@ -33,32 +33,32 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import com.avrgaming.civcraft.command.CommandBase;
-import com.avrgaming.civcraft.config.CivSettings;
-import com.avrgaming.civcraft.config.ConfigBuildableInfo;
-import com.avrgaming.civcraft.config.ConfigCultureBiomeInfo;
-import com.avrgaming.civcraft.config.ConfigCultureLevel;
-import com.avrgaming.civcraft.exception.CivException;
-import com.avrgaming.civcraft.exception.InvalidConfiguration;
-import com.avrgaming.civcraft.lorestorage.LoreGuiItem;
-import com.avrgaming.civcraft.main.CivGlobal;
-import com.avrgaming.civcraft.main.CivMessage;
-import com.avrgaming.civcraft.object.Civilization;
-import com.avrgaming.civcraft.object.Resident;
-import com.avrgaming.civcraft.object.Town;
-import com.avrgaming.civcraft.object.TownChunk;
-import com.avrgaming.civcraft.permission.PermissionGroup;
-import com.avrgaming.civcraft.questions.JoinTownResponse;
-import com.avrgaming.civcraft.structure.Capitol;
-import com.avrgaming.civcraft.structure.Structure;
-import com.avrgaming.civcraft.structure.TownHall;
-import com.avrgaming.civcraft.tutorial.CivTutorial;
-import com.avrgaming.civcraft.util.BlockCoord;
-import com.avrgaming.civcraft.util.ChunkCoord;
-import com.avrgaming.civcraft.util.CivColor;
-import com.avrgaming.civcraft.war.War;
-import com.avrgaming.global.perks.Perk;
-import com.avrgaming.global.perks.components.CustomTemplate;
+import com.civcraft.command.CommandBase;
+import com.civcraft.config.CivSettings;
+import com.civcraft.config.ConfigBuildableInfo;
+import com.civcraft.config.ConfigCultureBiomeInfo;
+import com.civcraft.config.ConfigCultureLevel;
+import com.civcraft.exception.CivException;
+import com.civcraft.exception.InvalidConfiguration;
+import com.civcraft.lorestorage.LoreGuiItem;
+import com.civcraft.main.CivGlobal;
+import com.civcraft.main.CivMessage;
+import com.civcraft.object.Civilization;
+import com.civcraft.object.Resident;
+import com.civcraft.object.Town;
+import com.civcraft.object.TownChunk;
+import com.civcraft.permission.PermissionGroup;
+import com.civcraft.questions.JoinTownResponse;
+import com.civcraft.structure.Capitol;
+import com.civcraft.structure.Structure;
+import com.civcraft.structure.TownHall;
+import com.civcraft.tutorial.CivTutorial;
+import com.civcraft.util.BlockCoord;
+import com.civcraft.util.ChunkCoord;
+import com.civcraft.util.CivColor;
+import com.civcraft.war.War;
+import com.global.perks.Perk;
+import com.global.perks.components.CustomTemplate;
 
 public class TownCommand extends CommandBase {
 	
@@ -81,7 +81,8 @@ public class TownCommand extends CommandBase {
 		commands.put("leave", "leaves the town you are currently in.");
 		commands.put("show", "[name] show info for town of this name.");
 		commands.put("evict", "[name] - evicts the resident named from town");
-		commands.put("list", "shows a list of all towns in the world.");
+		commands.put("list", "shows a list of all towns in the world, with their civ names.");
+		commands.put("listraw", "shows a list of all towns in the world, without their civ names.");
 		commands.put("reset", "Resets certain structures, action depends on structure.");
 		commands.put("top5", "Shows the top 5 towns in the world.");
 		commands.put("disbandtown", "Disbands this town, requres leader to type disbandtown as well.");
@@ -118,7 +119,7 @@ public class TownCommand extends CommandBase {
 		}
 		
 		if (!resident.getCiv().getLeaderGroup().hasMember(resident)) {
-			throw new CivException("You must be the civ's leader in order to do this.");
+			throw new CivException("You must be a civilization leader in order to do this.");
 		}
 		
 		if (!town.isStructureAddable(struct)) {
@@ -468,36 +469,42 @@ public class TownCommand extends CommandBase {
 				}
 			}
 		}
-		
 	}
 	
 	public void list_cmd() {
 		String out = "";
-		
 		CivMessage.sendHeading(sender, "Towns in the World");
 		for (Town town : CivGlobal.getTowns()) {
 			out += town.getName()+"("+town.getCiv().getName()+")"+", ";
 		}
-		
+		CivMessage.send(sender, out);
+	}
+	
+	public void listraw_cmd() {
+		String out = "";
+		CivMessage.sendHeading(sender, "Towns in the World");
+		for (Town town : CivGlobal.getTowns()) {
+			out += town.getName()+", ";
+		}
 		CivMessage.send(sender, out);
 	}
 	
 	public void evict_cmd() throws CivException {
+		Civilization civ = getSenderCiv();
 		Town town = getSelectedTown();
 		Resident resident = getResident();
-		
 		if (args.length < 2) {
 			throw new CivException("Enter the name of who you want to evict.");
 		}
 		
 		Resident residentToKick = getNamedResident(1);
-		
 		if (residentToKick.getTown() != town) {
 			throw new CivException(args[1]+" is not a member of this town.");
 		}
 		
-		if (!town.isInGroup("mayors", resident) && !town.isInGroup("assistants", resident)) {
-			throw new CivException("Only mayors and assistants of this town can evict residents.");
+		if (!town.isInGroup("mayors", resident) && !town.isInGroup("assistants", resident)
+				&& !civ.getLeaderGroup().hasMember(resident)) {
+			throw new CivException("Only mayors, assistants, and civilization leaders of this town can evict residents.");
 		}
 		
 		if (town.isInGroup("mayors", residentToKick) || town.isInGroup("assistants", residentToKick)) {
@@ -506,7 +513,6 @@ public class TownCommand extends CommandBase {
 		
 		if (!residentToKick.isLandOwner()) {
 			town.removeResident(residentToKick);
-
 			try {
 				CivMessage.send(CivGlobal.getPlayer(residentToKick), CivColor.Yellow+"You have been evicted from town!");
 			} catch (CivException e) {
@@ -622,12 +628,13 @@ public class TownCommand extends CommandBase {
 			throw new CivException("Enter the amount you want to withdraw.");
 		}
 		
+		Civilization civ = getSenderCiv();
 		Town town = getSelectedTown();
 		Player player = getPlayer();
 		Resident resident = getResident();
 		
-		if (!town.playerIsInGroupName("mayors", player)) {
-			throw new CivException("Only mayors can use this command.");
+		if (!town.playerIsInGroupName("mayors", player) && !civ.getLeaderGroup().hasMember(resident)) {
+			throw new CivException("Only mayors and civilization leaders can use this command.");
 		}
 		
 		try {
@@ -712,9 +719,7 @@ public class TownCommand extends CommandBase {
 		newResident.validateJoinTown(town);
 		
 		CivGlobal.questionPlayer(player, CivGlobal.getPlayer(newResident), 
-				"Would you like to join the town of "+town.getName()+"?",
-				INVITE_TIMEOUT, join);
-		
+				"Would you like to join the town of "+town.getName()+"?", INVITE_TIMEOUT, join);
 		CivMessage.sendSuccess(sender, CivColor.LightGray+"Invited to "+args[1]+" to town "+town.getName());
 	}
 	

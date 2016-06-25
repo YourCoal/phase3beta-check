@@ -16,11 +16,11 @@
  * is strictly forbidden unless prior written permission is obtained
  * from AVRGAMING LLC.
  */
-package com.avrgaming.civcraft.items.components;
+package com.civcraft.items.components;
 
 import gpl.AttributeUtil;
 
-import com.avrgaming.civcraft.util.CivColor;
+import com.civcraft.util.CivColor;
 
 public class Soulbound extends ItemComponent {
 

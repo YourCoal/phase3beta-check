@@ -1,25 +1,7 @@
-/*************************************************************************
- * 
- * AVRGAMING LLC
- * __________________
- * 
- *  [2013] AVRGAMING LLC
- *  All Rights Reserved.
- * 
- * NOTICE:  All information contained herein is, and remains
- * the property of AVRGAMING LLC and its suppliers,
- * if any.  The intellectual and technical concepts contained
- * herein are proprietary to AVRGAMING LLC
- * and its suppliers and may be covered by U.S. and Foreign Patents,
- * patents in process, and are protected by trade secret or copyright law.
- * Dissemination of this information or reproduction of this material
- * is strictly forbidden unless prior written permission is obtained
- * from AVRGAMING LLC.
- */
-package com.avrgaming.civcraft.command.resident;
+package com.civcraft.command.resident;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.TimeZone;
 
@@ -28,16 +10,23 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import com.avrgaming.civcraft.command.CommandBase;
-import com.avrgaming.civcraft.config.CivSettings;
-import com.avrgaming.civcraft.exception.CivException;
-import com.avrgaming.civcraft.exception.InvalidConfiguration;
-import com.avrgaming.civcraft.lorestorage.LoreCraftableMaterial;
-import com.avrgaming.civcraft.main.CivData;
-import com.avrgaming.civcraft.main.CivMessage;
-import com.avrgaming.civcraft.object.Resident;
-import com.avrgaming.civcraft.util.CivColor;
-import com.avrgaming.civcraft.util.ItemManager;
+import com.civcraft.command.CommandBase;
+import com.civcraft.config.CivSettings;
+import com.civcraft.exception.AlreadyRegisteredException;
+import com.civcraft.exception.CivException;
+import com.civcraft.exception.InvalidConfiguration;
+import com.civcraft.lorestorage.LoreCraftableMaterial;
+import com.civcraft.main.CivData;
+import com.civcraft.main.CivGlobal;
+import com.civcraft.main.CivMessage;
+import com.civcraft.object.CultureChunk;
+import com.civcraft.object.Relation;
+import com.civcraft.object.Resident;
+import com.civcraft.object.Town;
+import com.civcraft.util.ChunkCoord;
+import com.civcraft.util.CivColor;
+import com.civcraft.util.ItemManager;
+import com.civcraft.war.War;
 
 public class ResidentCommand extends CommandBase {
 
@@ -58,7 +47,7 @@ public class ResidentCommand extends CommandBase {
 		commands.put("refresh", "Refreshes your perks.");
 		commands.put("timezone", "(timezone) Display your current timezone or change it to (timezone)");
 		commands.put("pvptimer", "Remove your PvP Timer. This is a permenant change and can not be undone.");
-		//commands.put("switchtown", "[town] - Allows you to instantly change your town to this town, if this town belongs to your civ.");
+		commands.put("switchtown", "[town] - Allows you to instantly change your town to this town, if this town belongs to your civ.");
 	}
 	
 	public void pvptimer_cmd() throws CivException {
@@ -74,9 +63,7 @@ public class ResidentCommand extends CommandBase {
 	
 	public void timezone_cmd() throws CivException {
 		Resident resident = getResident();
-		
 		if (args.length < 2) {
-;
 			CivMessage.sendSuccess(sender, "Your current timezone is set to "+resident.getTimezone());
 			return;
 		}
@@ -92,12 +79,10 @@ public class ResidentCommand extends CommandBase {
 		}
 		
 		TimeZone timezone = TimeZone.getTimeZone(args[1]);
-		
 		if (timezone.getID().equals("GMT") && !args[1].equalsIgnoreCase("GMT")) {
 			CivMessage.send(sender, CivColor.LightGray+"We may not have recognized your timezone \""+args[1]+"\" if so, we'll set it to GMT.");
 			CivMessage.send(sender, CivColor.LightGray+"Type \"/resident timezone list\" to get a list of all available timezones.");
 		}
-		
 		resident.setTimezone(timezone.getID());
 		resident.save();
 		CivMessage.sendSuccess(sender, "TimeZone has been set to "+timezone.getID());
@@ -112,17 +97,11 @@ public class ResidentCommand extends CommandBase {
 	
 	public void perks_cmd() throws CivException {
 		Resident resident = getResident();
-		
-		//CivMessage.sendHeading(sender, "Your Perks");
-		//for (Perk p : resident.perks.values()) {
-		//	CivMessage.send(sender, "Perk:"+p.getIdent());
-		//}
 		resident.showPerkPage(0);
 	}
 	
 	public void book_cmd() throws CivException {
 		Player player = getPlayer();
-		
 		/* Determine if he already has the book. */
 		for (ItemStack stack : player.getInventory().getContents()) {
 			if (stack == null) {
@@ -134,55 +113,64 @@ public class ResidentCommand extends CommandBase {
 				continue;
 			}
 			
-			if (craftMat.getConfigId().equals("mat_tutorial_book")) {
+			if (craftMat.getConfigId().equals("civ:tutorial_book")) {
 				throw new CivException("You already have a help book.");
 			}
 		}
 		
-		LoreCraftableMaterial craftMat = LoreCraftableMaterial.getCraftMaterialFromId("mat_tutorial_book");
+		LoreCraftableMaterial craftMat = LoreCraftableMaterial.getCraftMaterialFromId("civ:tutorial_book");
 		ItemStack helpBook = LoreCraftableMaterial.spawn(craftMat);
-		
 		HashMap<Integer, ItemStack> leftovers = player.getInventory().addItem(helpBook);
 		if (leftovers != null && leftovers.size() >= 1) {
 			throw new CivException("You cannot hold anything else. Get some space open in your inventory first.");
 		}
-		
 		CivMessage.sendSuccess(player, "Added a help book to your inventory!");
 	}
 	
-	/*
-	 * We need to figure out how to handle debt for the resident when he switches towns.
-	 * Should we even allow this? idk. Maybe war respawn points is enough?
-	 */
-//	public void switchtown_cmd() throws CivException {
-//		Town town = getNamedTown(1);
-//		Resident resident = getResident();
-//		
-//		if (resident.getTown() == town) {
-//			throw new CivException("You cannot switch to your own town.");
-//		}
-//		
-//		if (resident.getTown().getMotherCiv() != town.getMotherCiv()) {
-//			throw new CivException("You cannot place yourself into a conquered civ's town.");
-//		}
-//		
-//		if (town.getCiv() != resident.getCiv()) {
-//			throw new CivException("You cannot switch to a town not in your civ.");
-//		}
-//		
-//		if (town.getMayorGroup().hasMember(resident) && town.getMayorGroup().getMemberCount() <= 1) {
-//			throw new CivException("You are the last mayor of the town and cannot leave it.");
-//		}
-//		
-//		resident.getTown().removeResident(resident);
-//		try {
-//			town.addResident(resident);
-//		} catch (AlreadyRegisteredException e) {
-//			e.printStackTrace();
-//			throw new CivException("You already belong to this town.");
-//		}
-//		
-//	}
+	/* We need to figure out how to handle debt for the resident when he switches towns.
+	 * Should we even allow this? idk. Maybe war respawn points is enough? */
+	public void switchtown_cmd() throws CivException { 
+		Town town = getNamedTown(1);
+		Resident resident = getResident();
+		if (War.isWarTime()) {
+			throw new CivException("Cannot switch towns during WarTime.");
+		}
+		
+		if (resident.getTown() == town) {
+			throw new CivException("You cannot switch to your own town.");
+		}
+		
+		CultureChunk cc = CivGlobal.getCultureChunk(new ChunkCoord(getPlayer().getLocation()));
+		Relation.Status status = cc.getCiv().getDiplomacyManager().getRelationStatus(getPlayer());
+		if (War.isWithinWarDeclareDays() && status.equals(Relation.Status.WAR)) {
+			throw new CivException("Cannot switch to other towns if you are at war & it is too close to WarTime.");
+		}
+		
+		if (!resident.getCiv().getLeaderGroup().hasMember(resident)) {
+			throw new CivException("You must be a civilization leader in order to do this.");
+		}
+		
+		if (resident.getTown().getMotherCiv() != town.getMotherCiv()) {
+			throw new CivException("You cannot place yourself into a conquered civ's town.");
+		}
+		
+		if (town.getCiv() != resident.getCiv()) {
+			throw new CivException("You cannot switch to a town not in your civ.");
+		}
+		
+		if (town.getMayorGroup().hasMember(resident) && town.getMayorGroup().getMemberCount() < 2) {
+			throw new CivException("You are the last mayor of the town and cannot leave it.");
+		}
+		
+		resident.getTown().removeResident(resident);
+		try {
+			town.addResident(resident);
+			CivMessage.send(resident, CivColor.LightGreen+"You have switched to town "+town.getName());
+		} catch (AlreadyRegisteredException e) {
+			e.printStackTrace();
+			throw new CivException("You already belong to this town.");
+		}
+	}
 	
 	public void exchange_cmd() throws CivException {
 		Player player = getPlayer();
@@ -307,9 +295,12 @@ public class ResidentCommand extends CommandBase {
 	
 	public static void show(CommandSender sender, Resident resident) {
 		CivMessage.sendHeading(sender, "Resident "+resident.getName());
-		Date lastOnline = new Date(resident.getLastOnline());
+//		Date lastOnline = new Date(resident.getLastOnline());
 		SimpleDateFormat sdf = new SimpleDateFormat("M/dd/yy h:mm:ss a z");
-		CivMessage.send(sender, CivColor.Green+"Last Online:"+CivColor.LightGreen+sdf.format(lastOnline));
+		Calendar cal = Calendar.getInstance();
+		cal.setTimeZone(TimeZone.getTimeZone(resident.getTimezone()));
+		sdf.setTimeZone(cal.getTimeZone());
+		CivMessage.send(sender, CivColor.Green+"Last Online:"+CivColor.LightGreen+sdf.format(cal.getTime()));
 		CivMessage.send(sender, CivColor.Green+"Town: "+CivColor.LightGreen+resident.getTownString());
 		CivMessage.send(sender, CivColor.Green+"Camp: "+CivColor.LightGreen+resident.getCampString());
 		

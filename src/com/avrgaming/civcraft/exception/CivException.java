@@ -16,7 +16,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from AVRGAMING LLC.
  */
-package com.avrgaming.civcraft.exception;
+package com.civcraft.exception;
 
 public class CivException extends Exception {
 

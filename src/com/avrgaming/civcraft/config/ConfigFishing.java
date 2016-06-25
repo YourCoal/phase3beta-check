@@ -1,4 +1,4 @@
-package com.avrgaming.civcraft.config;
+package com.civcraft.config;
 /*************************************************************************
  * 
  * AVRGAMING LLC
@@ -25,7 +25,7 @@ import java.util.Map;
 
 import org.bukkit.configuration.file.FileConfiguration;
 
-import com.avrgaming.civcraft.main.CivLog;
+import com.civcraft.main.CivLog;
 
 public class ConfigFishing {
 	public String craftMatId;

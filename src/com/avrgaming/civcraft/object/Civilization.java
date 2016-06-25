@@ -1,22 +1,4 @@
-/*************************************************************************
- * 
- * AVRGAMING LLC
- * __________________
- * 
- *  [2013] AVRGAMING LLC
- *  All Rights Reserved.
- * 
- * NOTICE:  All information contained herein is, and remains
- * the property of AVRGAMING LLC and its suppliers,
- * if any.  The intellectual and technical concepts contained
- * herein are proprietary to AVRGAMING LLC
- * and its suppliers and may be covered by U.S. and Foreign Patents,
- * patents in process, and are protected by trade secret or copyright law.
- * Dissemination of this information or reproduction of this material
- * is strictly forbidden unless prior written permission is obtained
- * from AVRGAMING LLC.
- */
-package com.avrgaming.civcraft.object;
+package com.civcraft.object;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -37,35 +19,35 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import com.avrgaming.civcraft.camp.WarCamp;
-import com.avrgaming.civcraft.config.CivSettings;
-import com.avrgaming.civcraft.config.ConfigGovernment;
-import com.avrgaming.civcraft.config.ConfigTech;
-import com.avrgaming.civcraft.database.SQL;
-import com.avrgaming.civcraft.database.SQLUpdate;
-import com.avrgaming.civcraft.endgame.EndConditionScience;
-import com.avrgaming.civcraft.endgame.EndGameCondition;
-import com.avrgaming.civcraft.exception.CivException;
-import com.avrgaming.civcraft.exception.InvalidConfiguration;
-import com.avrgaming.civcraft.exception.InvalidNameException;
-import com.avrgaming.civcraft.lorestorage.LoreCraftableMaterial;
-import com.avrgaming.civcraft.main.CivGlobal;
-import com.avrgaming.civcraft.main.CivLog;
-import com.avrgaming.civcraft.main.CivMessage;
-import com.avrgaming.civcraft.object.Relation.Status;
-import com.avrgaming.civcraft.permission.PermissionGroup;
-import com.avrgaming.civcraft.structure.Capitol;
-import com.avrgaming.civcraft.structure.RespawnLocationHolder;
-import com.avrgaming.civcraft.structure.Structure;
-import com.avrgaming.civcraft.structure.TownHall;
-import com.avrgaming.civcraft.threading.TaskMaster;
-import com.avrgaming.civcraft.threading.tasks.UpdateTechBar;
-import com.avrgaming.civcraft.threading.timers.BeakerTimer;
-import com.avrgaming.civcraft.util.BlockCoord;
-import com.avrgaming.civcraft.util.ChunkCoord;
-import com.avrgaming.civcraft.util.CivColor;
-import com.avrgaming.civcraft.util.DateUtil;
-import com.avrgaming.civcraft.util.ItemManager;
+import com.civcraft.camp.WarCamp;
+import com.civcraft.config.CivSettings;
+import com.civcraft.config.ConfigGovernment;
+import com.civcraft.config.ConfigTech;
+import com.civcraft.database.SQL;
+import com.civcraft.database.SQLUpdate;
+import com.civcraft.endgame.EndConditionScience;
+import com.civcraft.endgame.EndGameCondition;
+import com.civcraft.exception.CivException;
+import com.civcraft.exception.InvalidConfiguration;
+import com.civcraft.exception.InvalidNameException;
+import com.civcraft.lorestorage.LoreCraftableMaterial;
+import com.civcraft.main.CivGlobal;
+import com.civcraft.main.CivLog;
+import com.civcraft.main.CivMessage;
+import com.civcraft.object.Relation.Status;
+import com.civcraft.permission.PermissionGroup;
+import com.civcraft.structure.Capitol;
+import com.civcraft.structure.RespawnLocationHolder;
+import com.civcraft.structure.Structure;
+import com.civcraft.structure.TownHall;
+import com.civcraft.threading.TaskMaster;
+import com.civcraft.threading.tasks.UpdateTechBar;
+import com.civcraft.threading.timers.BeakerTimer;
+import com.civcraft.util.BlockCoord;
+import com.civcraft.util.ChunkCoord;
+import com.civcraft.util.CivColor;
+import com.civcraft.util.DateUtil;
+import com.civcraft.util.ItemManager;
 
 public class Civilization extends SQLObject {
 
@@ -80,12 +62,14 @@ public class Civilization extends SQLObject {
 		
 	private EconObject treasury;
 	private PermissionGroup leaderGroup;
-	private PermissionGroup adviserGroup;
+	private PermissionGroup dipadviserGroup;
+	private PermissionGroup econadviserGroup;
 	
 	/* Strings used for reverse lookups. */
 	private String leaderName;
 	private String leaderGroupName;
-	private String advisersGroupName;
+	private String dipadvisersGroupName;
+	private String econadvisersGroupName;
 	private String capitolName;
 	
 	private ConcurrentHashMap<String, Town> towns = new ConcurrentHashMap<String, Town>();
@@ -120,7 +104,7 @@ public class Civilization extends SQLObject {
 	
 	public Civilization(String name, String capitolName, Resident leader) throws InvalidNameException {
 		this.setName(name);
-		this.leaderName = leader.getName();
+		this.leaderName = leader.getUUID().toString();
 		this.setCapitolName(capitolName);
 		
 		this.government = CivSettings.governments.get("gov_tribalism");		
@@ -164,7 +148,8 @@ public class Civilization extends SQLObject {
 					"`income_tax_rate` float NOT NULL DEFAULT 0," +
 					"`science_percentage` float NOT NULL DEFAULT 0,"+
 					"`leaderGroupName` mediumtext DEFAULT NULL,"+
-					"`advisersGroupName` mediumtext DEFAULT NULL,"+
+					"`dipadvisersGroupName` mediumtext DEFAULT NULL,"+
+					"`econadvisersGroupName` mediumtext DEFAULT NULL,"+
 					"`lastUpkeepTick` mediumtext DEFAULT NULL," +
 					"`lastTaxesTick` mediumtext DEFAULT NULL," +
 					"`adminCiv` boolean DEFAULT false,"+
@@ -189,15 +174,14 @@ public class Civilization extends SQLObject {
 		this.setId(rs.getInt("id"));
 		this.setName(rs.getString("name"));		
 
-		if (CivGlobal.useUUID) {
-			leaderName = CivGlobal.getResidentViaUUID(UUID.fromString(rs.getString("leaderName"))).getName();
-		} else {
-			leaderName = rs.getString("leaderName");		
-		}
+		String resUUID = rs.getString("leaderName");
+//		Resident res = CivGlobal.getResidentViaUUID(UUID.fromString(resUUID));
+		leaderName = resUUID;
 		
 		capitolName = rs.getString("capitolName");
 		setLeaderGroupName(rs.getString("leaderGroupName"));
-		setAdvisersGroupName(rs.getString("advisersGroupName"));
+		setDipAdvisersGroupName(rs.getString("dipadvisersGroupName"));
+		setEconAdvisersGroupName(rs.getString("econadvisersGroupName"));
 		daysInDebt = rs.getInt("daysInDebt");
 		this.color = rs.getInt("color");
 		this.setResearchTech(CivSettings.techs.get(rs.getString("researchTech")));
@@ -244,14 +228,11 @@ public class Civilization extends SQLObject {
 	public void saveNow() throws SQLException {
 		HashMap<String, Object> hashmap = new HashMap<String, Object>();
 		hashmap.put("name", this.getName());
-		if (CivGlobal.useUUID) {
-			hashmap.put("leaderName", this.getLeader().getUUIDString());
-		} else {
-			hashmap.put("leaderName", leaderName);			
-		}
+		hashmap.put("leaderName", this.getLeader().getUUIDString());
 		hashmap.put("capitolName", this.capitolName);
 		hashmap.put("leaderGroupName", this.getLeaderGroupName());
-		hashmap.put("advisersGroupName", this.getAdvisersGroupName());
+		hashmap.put("dipadvisersGroupName", this.getDipAdvisersGroupName());
+		hashmap.put("econadvisersGroupName", this.getEconAdvisersGroupName());
 		hashmap.put("debt", this.getTreasury().getDebt());
 		hashmap.put("coins", this.getTreasury().getBalance());
 		hashmap.put("daysInDebt", this.daysInDebt);
@@ -404,11 +385,11 @@ public class Civilization extends SQLObject {
 	}
 
 	public Resident getLeader() {
-		return CivGlobal.getResident(leaderName);
+		return CivGlobal.getResidentViaUUID(UUID.fromString(leaderName));
 	}
 
 	public void setLeader(Resident leader) {
-		this.leaderName = leader.getName();
+		this.leaderName = leader.getUUID().toString();
 	}
 
 	@Override
@@ -419,8 +400,12 @@ public class Civilization extends SQLObject {
 			this.leaderGroup.delete();
 		}
 		
-		if (this.adviserGroup != null) {
-			this.adviserGroup.delete();
+		if (this.dipadviserGroup != null) {
+			this.dipadviserGroup.delete();
+		}
+		
+		if (this.econadviserGroup != null) {
+			this.econadviserGroup.delete();
 		}
 		
 		/* Delete all of our towns. */
@@ -454,12 +439,20 @@ public class Civilization extends SQLObject {
 		this.leaderGroupName = "leaders";
 	}
 
-	public String getAdvisersGroupName() {
-		return "advisers";
+	public String getDipAdvisersGroupName() {
+		return "dipadvisers";
+	}
+	
+	public String getEconAdvisersGroupName() {
+		return "econadvisers";
 	}
 
-	public void setAdvisersGroupName(String advisersGroupName) {
-		this.advisersGroupName = "advisers";
+	public void setDipAdvisersGroupName(String advisersGroupName) {
+		this.dipadvisersGroupName = "dipadvisers";
+	}
+	
+	public void setEconAdvisersGroupName(String advisersGroupName) {
+		this.econadvisersGroupName = "econadvisers";
 	}
 
 	public double getIncomeTaxRate() {
@@ -546,9 +539,13 @@ public class Civilization extends SQLObject {
 			leadersGroup.saveNow();
 			civ.setLeaderGroup(leadersGroup);
 		
-			PermissionGroup adviserGroup = new PermissionGroup(civ, "advisers");
-			adviserGroup.saveNow();
-			civ.setAdviserGroup(adviserGroup);
+			PermissionGroup dipadviserGroup = new PermissionGroup(civ, "dipadvisers");
+			dipadviserGroup.saveNow();
+			civ.setDipAdviserGroup(dipadviserGroup);
+			
+			PermissionGroup econadviserGroup = new PermissionGroup(civ, "econadvisers");
+			econadviserGroup.saveNow();
+			civ.setEconAdviserGroup(econadviserGroup);
 			
 			/* Save this civ in the db and hashtable. */
 			try {		
@@ -557,7 +554,8 @@ public class Civilization extends SQLObject {
 				e.printStackTrace();
 				civ.delete();
 				leadersGroup.delete();
-				adviserGroup.delete();
+				dipadviserGroup.delete();
+				econadviserGroup.delete();
 				throw e;
 			}
 			
@@ -584,12 +582,13 @@ public class Civilization extends SQLObject {
 	}
 
 	public void addGroup(PermissionGroup grp) {
-		
 		if (grp.getName().equalsIgnoreCase(this.leaderGroupName)) {
 			this.setLeaderGroup(grp);
-		} else if (grp.getName().equalsIgnoreCase(this.advisersGroupName)) {
-			this.setAdviserGroup(grp);
-		}		
+		} else if (grp.getName().equalsIgnoreCase(this.dipadvisersGroupName)) {
+			this.setDipAdviserGroup(grp);
+		} else if (grp.getName().equalsIgnoreCase(this.econadvisersGroupName)) {
+		this.setEconAdviserGroup(grp);
+		}
 	}
 
 	public PermissionGroup getLeaderGroup() {
@@ -600,12 +599,20 @@ public class Civilization extends SQLObject {
 		this.leaderGroup = leaderGroup;
 	}
 
-	public PermissionGroup getAdviserGroup() {
-		return adviserGroup;
+	public PermissionGroup getDipAdviserGroup() {
+		return dipadviserGroup;
 	}
 
-	public void setAdviserGroup(PermissionGroup adviserGroup) {
-		this.adviserGroup = adviserGroup;
+	public void setDipAdviserGroup(PermissionGroup adviserGroup) {
+		this.dipadviserGroup = adviserGroup;
+	}
+	
+	public PermissionGroup getEconAdviserGroup() {
+		return econadviserGroup;
+	}
+
+	public void setEconAdviserGroup(PermissionGroup adviserGroup) {
+		this.econadviserGroup = adviserGroup;
 	}
 
 	public Collection<Town> getTowns() {
@@ -1109,10 +1116,7 @@ public class Civilization extends SQLObject {
 			civ.setGovernment(gov.id);
 			CivMessage.global(civ.getName()+" has emerged from anarchy and has adopted "+CivSettings.governments.get(gov.id).displayName);
 		}
-		
-		
 		civ.save();
-		
 	}
 
 	public String getUpkeepPaid(Town town, String type) {
@@ -1669,10 +1673,6 @@ public class Civilization extends SQLObject {
 				((EndConditionScience)scienceVictory).addExtraBeakersToCiv(this, beakerTotal);
 				return;
 			}
-		}
-		
-		for (Town town : this.towns.values()) {
-			town.addUnusedBeakers(town.getBeakers().total / BeakerTimer.BEAKER_PERIOD);
 		}
 	}
 

@@ -16,18 +16,18 @@
  * is strictly forbidden unless prior written permission is obtained
  * from AVRGAMING LLC.
  */
-package com.avrgaming.civcraft.event;
+package com.civcraft.event;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-import com.avrgaming.civcraft.config.CivSettings;
-import com.avrgaming.civcraft.exception.CivException;
-import com.avrgaming.civcraft.exception.InvalidConfiguration;
-import com.avrgaming.civcraft.main.CivLog;
-import com.avrgaming.civcraft.threading.TaskMaster;
-import com.avrgaming.civcraft.threading.tasks.CultureProcessAsyncTask;
-import com.avrgaming.civcraft.threading.timers.DailyTimer;
+import com.civcraft.config.CivSettings;
+import com.civcraft.exception.CivException;
+import com.civcraft.exception.InvalidConfiguration;
+import com.civcraft.main.CivLog;
+import com.civcraft.threading.TaskMaster;
+import com.civcraft.threading.tasks.CultureProcessAsyncTask;
+import com.civcraft.threading.timers.DailyTimer;
 
 public class DailyEvent implements EventInterface {
 	

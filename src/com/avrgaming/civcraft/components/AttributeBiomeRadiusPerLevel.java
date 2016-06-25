@@ -1,11 +1,11 @@
-package com.avrgaming.civcraft.components;
+package com.civcraft.components;
 
 import java.util.HashMap;
 
-import com.avrgaming.civcraft.main.CivLog;
-import com.avrgaming.civcraft.object.CultureChunk;
-import com.avrgaming.civcraft.structure.Buildable;
-import com.avrgaming.civcraft.util.ChunkCoord;
+import com.civcraft.main.CivLog;
+import com.civcraft.object.CultureChunk;
+import com.civcraft.structure.Buildable;
+import com.civcraft.util.ChunkCoord;
 
 public class AttributeBiomeRadiusPerLevel extends AttributeBiomeBase {
 	

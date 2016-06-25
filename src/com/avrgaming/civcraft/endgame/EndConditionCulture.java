@@ -1,9 +1,9 @@
-package com.avrgaming.civcraft.endgame;
+package com.civcraft.endgame;
 
-import com.avrgaming.civcraft.main.CivGlobal;
-import com.avrgaming.civcraft.object.Civilization;
-import com.avrgaming.civcraft.object.Town;
-import com.avrgaming.civcraft.structure.wonders.Wonder;
+import com.civcraft.main.CivGlobal;
+import com.civcraft.object.Civilization;
+import com.civcraft.object.Town;
+import com.civcraft.structure.wonders.Wonder;
 
 public class EndConditionCulture extends EndGameCondition {
 

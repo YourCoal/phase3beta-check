@@ -16,7 +16,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from AVRGAMING LLC.
  */
-package com.avrgaming.civcraft.components;
+package com.civcraft.components;
 
 import java.util.LinkedList;
 import java.util.Random;
@@ -24,12 +24,12 @@ import java.util.Random;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import com.avrgaming.civcraft.exception.CivTaskAbortException;
-import com.avrgaming.civcraft.threading.CivAsyncTask;
-import com.avrgaming.civcraft.threading.sync.request.UpdateInventoryRequest.Action;
-import com.avrgaming.civcraft.util.BlockCoord;
-import com.avrgaming.civcraft.util.ItemManager;
-import com.avrgaming.civcraft.util.MultiInventory;
+import com.civcraft.exception.CivTaskAbortException;
+import com.civcraft.threading.CivAsyncTask;
+import com.civcraft.threading.sync.request.UpdateInventoryRequest.Action;
+import com.civcraft.util.BlockCoord;
+import com.civcraft.util.ItemManager;
+import com.civcraft.util.MultiInventory;
 
 public class SifterComponent extends Component {
 

@@ -16,7 +16,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from AVRGAMING LLC.
  */
-package com.avrgaming.civcraft.object;
+package com.civcraft.object;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -27,6 +27,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
@@ -34,53 +35,53 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import com.avrgaming.civcraft.components.AttributeBase;
-import com.avrgaming.civcraft.components.AttributeRate;
-import com.avrgaming.civcraft.components.AttributeWarUnhappiness;
-import com.avrgaming.civcraft.components.Component;
-import com.avrgaming.civcraft.config.CivSettings;
-import com.avrgaming.civcraft.config.ConfigBuff;
-import com.avrgaming.civcraft.config.ConfigBuildableInfo;
-import com.avrgaming.civcraft.config.ConfigCultureLevel;
-import com.avrgaming.civcraft.config.ConfigGovernment;
-import com.avrgaming.civcraft.config.ConfigHappinessState;
-import com.avrgaming.civcraft.config.ConfigTownLevel;
-import com.avrgaming.civcraft.config.ConfigTownUpgrade;
-import com.avrgaming.civcraft.config.ConfigUnit;
-import com.avrgaming.civcraft.database.SQL;
-import com.avrgaming.civcraft.database.SQLUpdate;
-import com.avrgaming.civcraft.exception.AlreadyRegisteredException;
-import com.avrgaming.civcraft.exception.CivException;
-import com.avrgaming.civcraft.exception.InvalidConfiguration;
-import com.avrgaming.civcraft.exception.InvalidNameException;
-import com.avrgaming.civcraft.interactive.InteractiveBuildableRefresh;
-import com.avrgaming.civcraft.items.BonusGoodie;
-import com.avrgaming.civcraft.items.units.Unit;
-import com.avrgaming.civcraft.main.CivGlobal;
-import com.avrgaming.civcraft.main.CivLog;
-import com.avrgaming.civcraft.main.CivMessage;
-import com.avrgaming.civcraft.permission.PermissionGroup;
-import com.avrgaming.civcraft.randomevents.RandomEvent;
-import com.avrgaming.civcraft.road.Road;
-import com.avrgaming.civcraft.structure.Buildable;
-import com.avrgaming.civcraft.structure.Structure;
-import com.avrgaming.civcraft.structure.TownHall;
-import com.avrgaming.civcraft.structure.TradeOutpost;
-import com.avrgaming.civcraft.structure.Wall;
-import com.avrgaming.civcraft.structure.wonders.Wonder;
-import com.avrgaming.civcraft.template.Template;
-import com.avrgaming.civcraft.threading.TaskMaster;
-import com.avrgaming.civcraft.threading.sync.SyncUpdateTags;
-import com.avrgaming.civcraft.threading.tasks.BuildAsyncTask;
-import com.avrgaming.civcraft.util.BlockCoord;
-import com.avrgaming.civcraft.util.ChunkCoord;
-import com.avrgaming.civcraft.util.CivColor;
-import com.avrgaming.civcraft.util.DateUtil;
-import com.avrgaming.civcraft.util.ItemFrameStorage;
-import com.avrgaming.civcraft.util.WorldCord;
-import com.avrgaming.civcraft.war.War;
-import com.avrgaming.global.perks.Perk;
-import com.avrgaming.global.perks.components.CustomTemplate;
+import com.civcraft.components.AttributeBase;
+import com.civcraft.components.AttributeRate;
+import com.civcraft.components.AttributeWarUnhappiness;
+import com.civcraft.components.Component;
+import com.civcraft.config.CivSettings;
+import com.civcraft.config.ConfigBuff;
+import com.civcraft.config.ConfigBuildableInfo;
+import com.civcraft.config.ConfigCultureLevel;
+import com.civcraft.config.ConfigGovernment;
+import com.civcraft.config.ConfigHappinessState;
+import com.civcraft.config.ConfigTownLevel;
+import com.civcraft.config.ConfigTownUpgrade;
+import com.civcraft.config.ConfigUnit;
+import com.civcraft.database.SQL;
+import com.civcraft.database.SQLUpdate;
+import com.civcraft.exception.AlreadyRegisteredException;
+import com.civcraft.exception.CivException;
+import com.civcraft.exception.InvalidConfiguration;
+import com.civcraft.exception.InvalidNameException;
+import com.civcraft.interactive.InteractiveBuildableRefresh;
+import com.civcraft.items.BonusGoodie;
+import com.civcraft.items.units.Unit;
+import com.civcraft.main.CivGlobal;
+import com.civcraft.main.CivLog;
+import com.civcraft.main.CivMessage;
+import com.civcraft.permission.PermissionGroup;
+import com.civcraft.randomevents.RandomEvent;
+import com.civcraft.road.Road;
+import com.civcraft.structure.Buildable;
+import com.civcraft.structure.Lab;
+import com.civcraft.structure.Mine;
+import com.civcraft.structure.Structure;
+import com.civcraft.structure.TownHall;
+import com.civcraft.structure.TradeOutpost;
+import com.civcraft.structure.Wall;
+import com.civcraft.structure.wonders.Wonder;
+import com.civcraft.template.Template;
+import com.civcraft.threading.tasks.BuildAsyncTask;
+import com.civcraft.util.BlockCoord;
+import com.civcraft.util.ChunkCoord;
+import com.civcraft.util.CivColor;
+import com.civcraft.util.DateUtil;
+import com.civcraft.util.ItemFrameStorage;
+import com.civcraft.util.WorldCord;
+import com.civcraft.war.War;
+import com.global.perks.Perk;
+import com.global.perks.components.CustomTemplate;
 
 public class Town extends SQLObject {
 
@@ -102,6 +103,9 @@ public class Town extends SQLObject {
 	private Civilization motherCiv;
 	private int daysInDebt;
 	
+	/* Beakers */
+	private double baseBeakers = 1.0;
+	
 	/* Hammers */
 	private double baseHammers = 1.0;
 	private double extraHammers;
@@ -114,9 +118,6 @@ public class Town extends SQLObject {
 	private PermissionGroup defaultGroup;
 	private PermissionGroup mayorGroup;
 	private PermissionGroup assistantGroup;
-	
-	/* Beakers */
-	private double unusedBeakers;
 	
 	// These are used to resolve reverse references after the database loads.
 	private String defaultGroupName;
@@ -149,6 +150,11 @@ public class Town extends SQLObject {
 	public LinkedList<Buildable> invalidStructures = new LinkedList<Buildable>();
 	
 	/* XXX kind of a hacky way to save the bank's level information between build undo calls */
+	public int saved_nuclear_plant_level = 1;
+	public int saved_trade_shipyard_upgrade_level = 1;
+	public int saved_fishery_level = 1;
+	public int saved_quarry_level = 1;
+	public int saved_trommel_level = 1;
 	public int saved_bank_level = 1;
 	public double saved_bank_interest_amount = 0;
 	
@@ -173,7 +179,7 @@ public class Town extends SQLObject {
 	}
 	public HashMap<String, AttrCache> attributeCache = new HashMap<String, AttrCache>();
 	
-	private double baseGrowth = 0.0;
+	private double baseGrowth = 1.0;
 	
 	public static final String TABLE_NAME = "TOWNS";
 	public static void init() throws SQLException {
@@ -483,8 +489,7 @@ public class Town extends SQLObject {
 			throw new AlreadyRegisteredException(res.getName()+" already a member of town "+this.getName());
 		}
 		
-		res.setTown(this);				
-		
+		res.setTown(this);
 		residents.put(key, res);
 		if (this.defaultGroup != null && !this.defaultGroup.hasMember(res)) {
 			this.defaultGroup.addMember(res);
@@ -576,10 +581,16 @@ public class Town extends SQLObject {
 		rates.put("Government", newRate - rate);
 		rate = newRate;
 		
-		ConfigHappinessState state = CivSettings.getHappinessState(this.getHappinessPercentage());
-		newRate = rate * state.culture_rate;
-		rates.put("Happiness", newRate - rate);
+		double randomRate = RandomEvent.getCultureRate(this);
+		newRate = rate * randomRate;
+		rates.put("Random Events", newRate - rate);
 		rate = newRate;
+		
+		//XXX Disabled round 3
+		//ConfigHappinessState state = CivSettings.getHappinessState(this.getHappinessPercentage());
+		//newRate = rate * state.culture_rate;
+		//rates.put("Happiness", newRate - rate);
+		//rate = newRate;
 		
 		double additional = this.getBuffManager().getEffectiveDouble(Buff.FINE_ART);
 		
@@ -589,12 +600,10 @@ public class Town extends SQLObject {
 		
 		rates.put("Wonders/Goodies", additional);
 		rate += additional;
-		
 		return new AttrSource(rates, rate, null);
 	}
 	
 	public AttrSource getCulture() {
-
 		AttrCache cache = this.attributeCache.get("CULTURE");
 		if (cache == null) {
 			cache = new AttrCache();
@@ -671,7 +680,7 @@ public class Town extends SQLObject {
 	}
 	
 	public AttrSource getHammerRate() {
-		double rate = 1.0;
+		double rate = 1.5;
 		HashMap<String, Double> rates = new HashMap<String, Double>();
 		ConfigHappinessState state = CivSettings.getHappinessState(this.getHappinessPercentage());
 
@@ -734,6 +743,10 @@ public class Town extends SQLObject {
 		/* Grab happiness generated from structures with components. */
 		double structures = 0;
 		for (Structure struct : this.structures.values()) {
+			if (struct instanceof Mine) {
+				Mine mine = (Mine)struct;
+				structures += mine.getBonusHammers(); 
+			}
 			for (Component comp : struct.attachedComponents) {
 				if (comp instanceof AttributeBase) {
 					AttributeBase as = (AttributeBase)comp;
@@ -766,6 +779,14 @@ public class Town extends SQLObject {
 
 	public void setHammerRate(double hammerRate) {
 		this.baseHammers = hammerRate;
+	}
+	
+	public void setBeakerRate(double beakerRate) {
+		this.baseBeakers = beakerRate;
+	}
+	
+	public void setGrowthRate(double growthRate) {
+		this.baseGrowth = growthRate;
 	}
 	
 	public static Town newTown(Resident resident, String name, Civilization civ, boolean free, boolean capitol, 
@@ -1198,7 +1219,7 @@ public class Town extends SQLObject {
 				return CivColor.Green+"[No PvP]";
 			}
 		} else {
-			return CivColor.Red+"[WAR-PvP]";
+			return CivColor.Gold+"[WAR-PvP]";
 		}
 	}
 	
@@ -1349,10 +1370,9 @@ public class Town extends SQLObject {
 			this.getTreasury().withdraw(this.getTreasury().getBalance());
 			
 		}
-		
 		return upkeep;
 	}
-
+	
 	public double getBaseUpkeep() {
 		ConfigTownLevel level = CivSettings.townLevels.get(this.level);
 		return level.upkeep;
@@ -1412,6 +1432,7 @@ public class Town extends SQLObject {
 			out += "<h3><b>"+this.getName()+"</b> (<i>"+this.getCiv().getName()+"</i>)</h3>";		
 			out += "<b>Mayors: "+this.getMayorGroup().getMembersString()+"</b>";
 		} catch (Exception e) {
+			CivLog.debug("Town: "+this.getName());
 			e.printStackTrace();
 		}
 		
@@ -1504,8 +1525,16 @@ public class Town extends SQLObject {
 	
 	public void buildWonder(Player player, String id, Location center, Template tpl) throws CivException {
 
-		if (!center.getWorld().getName().equals("world")) {
+		if (!center.getWorld().getName().equals("World")) {
 			throw new CivException("Can only build wonders in the overworld ... for now.");
+		}
+		
+		if (!center.getWorld().getName().equals("World_nether")) {
+			CivMessage.global(player.getName()+" is possibly hacking. Screenshot this and report to an admin right away!");
+		}
+		
+		if (!center.getWorld().getName().equals("World_end")) {
+			CivMessage.global(player.getName()+" is possibly hacking. Screenshot this and report to an admin right away!");
 		}
 		
 		Wonder wonder = Wonder.newWonder(center, id, this);
@@ -1786,11 +1815,21 @@ public class Town extends SQLObject {
 	}
 	
 	public AttrSource getGrowthRate() {
-		double rate = 1.0;
+		double rate = 3.0;
 		HashMap<String, Double> rates = new HashMap<String, Double>();
 		
-		double newRate = rate * getGovernment().growth_rate;
+		ConfigHappinessState state = this.getHappinessState();
+		double newRate = rate*state.growth_rate;
+		rates.put("Happiness", newRate - rate);
+		rate = newRate;
+
+		newRate = rate*getGovernment().growth_rate;
 		rates.put("Government", newRate - rate);
+		rate = newRate;
+		
+		double randomRate = RandomEvent.getGrowthRate(this);
+		newRate = rate * randomRate;
+		rates.put("Random Events", newRate - rate);
 		rate = newRate;
 		
 		/* Wonders and Goodies. */
@@ -1808,7 +1847,6 @@ public class Town extends SQLObject {
 		additional += (additionalGrapes*grapeCount);
 		rates.put("Wonders/Goodies", additional);
 		rate += additional;
-	
 		return new AttrSource(rates, rate, null);
 	}
 	
@@ -1873,21 +1911,18 @@ public class Town extends SQLObject {
 	
 	public double getCottageRate() {
 		double rate = getGovernment().cottage_rate;
-
 		double additional = rate*this.getBuffManager().getEffectiveDouble(Buff.COTTAGE_RATE);
 		rate += additional;
 		
-		/* Adjust for happiness state. */
 		rate *= this.getHappinessState().coin_rate;
 		return rate;
 	}
-
+	
 	public double getSpreadUpkeep() throws InvalidConfiguration {
 		double total = 0.0;
 		double grace_distance = CivSettings.getDoubleTown("town.upkeep_town_block_grace_distance");
 		double base = CivSettings.getDoubleTown("town.upkeep_town_block_base");
 		double falloff = CivSettings.getDoubleTown("town.upkeep_town_block_falloff");
-		
 		Structure townHall = this.getTownHall();
 		if (townHall == null) {
 			CivLog.error("No town hall for "+getName()+" while getting spread upkeep.");
@@ -1895,7 +1930,6 @@ public class Town extends SQLObject {
 		}
 		
 		ChunkCoord townHallChunk = new ChunkCoord(townHall.getCorner().getLocation());
-		
 		for (TownChunk tc : this.getTownChunks()) {
 			if (tc.isOutpost()) {
 				continue;
@@ -2351,17 +2385,18 @@ public class Town extends SQLObject {
 	}
 
 	public boolean isOutlaw(String name) {
-		return this.outlaws.contains(name);
+		Resident res = CivGlobal.getResident(name);
+		return this.outlaws.contains(res.getUUIDString());
 	}
 	
 	public void addOutlaw(String name) {
-		this.outlaws.add(name);
-		TaskMaster.syncTask(new SyncUpdateTags(name, this.residents.values()));
+		Resident res = CivGlobal.getResident(name);
+		this.outlaws.add(res.getUUIDString());
 	}
 	
 	public void removeOutlaw(String name) {
-		this.outlaws.remove(name);
-		TaskMaster.syncTask(new SyncUpdateTags(name, this.residents.values()));
+		Resident res = CivGlobal.getResident(name);
+		this.outlaws.remove(res.getUUIDString());
 	}
 	
 	public void changeCiv(Civilization newCiv) {
@@ -2378,7 +2413,7 @@ public class Town extends SQLObject {
 		/* Remove any outlaws which are in our new civ. */
 		LinkedList<String> removeUs = new LinkedList<String>();
 		for (String outlaw : this.outlaws) {
-			Resident resident = CivGlobal.getResident(outlaw);
+			Resident resident = CivGlobal.getResidentViaUUID(UUID.fromString(outlaw));
 			if (newCiv.hasResident(resident)) {
 				removeUs.add(outlaw);
 			}
@@ -2401,7 +2436,8 @@ public class Town extends SQLObject {
 		}
 		
 		if (!this.getMayorGroup().hasMember(resident) && !this.getAssistantGroup().hasMember(resident) && !this.getDefaultGroup().hasMember(resident)
-				&& !this.getCiv().getLeaderGroup().hasMember(resident) && !this.getCiv().getAdviserGroup().hasMember(resident)) {			
+				&& !this.getCiv().getLeaderGroup().hasMember(resident) && !this.getCiv().getDipAdviserGroup().hasMember(resident)
+				&& !this.getCiv().getEconAdviserGroup().hasMember(resident)) {			
 			throw new CivException("You do not have permission to select this town.");
 		}		
 	}
@@ -2562,7 +2598,7 @@ public class Town extends SQLObject {
 	
 	
 	public AttrSource getBeakerRate() {
-		double rate = 1.0;
+		double rate = 1.5;
 		HashMap<String, Double> rates = new HashMap<String, Double>();
 		
 		ConfigHappinessState state = this.getHappinessState();
@@ -2573,7 +2609,12 @@ public class Town extends SQLObject {
 		newRate = rate*getGovernment().beaker_rate;
 		rates.put("Government", newRate - rate);
 		rate = newRate;
-	
+		
+		double randomRate = RandomEvent.getBeakerRate(this);
+		newRate = rate * randomRate;
+		rates.put("Random Events", newRate - rate);
+		rate = newRate;
+		
 		/* Additional rate increases from buffs. */
 		/* Great Library buff is made to not stack with Science_Rate */
 		double additional = rate*getBuffManager().getEffectiveDouble(Buff.SCIENCE_RATE);
@@ -2612,6 +2653,11 @@ public class Town extends SQLObject {
 		/* Grab beakers generated from structures with components. */
 		double fromStructures = 0;
 		for (Structure struct : this.structures.values()) {
+			//TODO Fix
+			if (struct instanceof Lab) {
+				Lab lab = (Lab)struct;
+				fromStructures += lab.getBonusBeakers();
+			}
 			for (Component comp : struct.attachedComponents) {
 				if (comp instanceof AttributeBase) {
 					AttributeBase as = (AttributeBase)comp;
@@ -2624,6 +2670,9 @@ public class Town extends SQLObject {
 
 		beakers += fromStructures;
 		sources.put("Structures", fromStructures);
+		
+		sources.put("Base Beakers", baseBeakers);
+		beakers += baseBeakers;
 		
 		/* Grab any extra beakers from buffs. */
 		double wondersTrade = 0;
@@ -2963,18 +3012,6 @@ public class Town extends SQLObject {
 	public void setActiveEvent(RandomEvent activeEvent) {
 		this.activeEvent = activeEvent;
 	}
-
-	public double getUnusedBeakers() {
-		return unusedBeakers;
-	}
-
-	public void setUnusedBeakers(double unusedBeakers) {
-		this.unusedBeakers = unusedBeakers;
-	}	
-	
-	public void addUnusedBeakers(double more) {
-		this.unusedBeakers += more;
-	}
 	
 	public void markLastBuildableRefeshAsNow() {
 		this.lastBuildableRefresh = new Date();
@@ -3164,7 +3201,4 @@ public class Town extends SQLObject {
 	public Collection<Buildable> getDisabledBuildables() {
 		return this.disabledBuildables.values();
 	}
-
-
-
 }

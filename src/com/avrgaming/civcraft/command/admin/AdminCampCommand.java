@@ -1,33 +1,15 @@
-/*************************************************************************
- * 
- * AVRGAMING LLC
- * __________________
- * 
- *  [2013] AVRGAMING LLC
- *  All Rights Reserved.
- * 
- * NOTICE:  All information contained herein is, and remains
- * the property of AVRGAMING LLC and its suppliers,
- * if any.  The intellectual and technical concepts contained
- * herein are proprietary to AVRGAMING LLC
- * and its suppliers and may be covered by U.S. and Foreign Patents,
- * patents in process, and are protected by trade secret or copyright law.
- * Dissemination of this information or reproduction of this material
- * is strictly forbidden unless prior written permission is obtained
- * from AVRGAMING LLC.
- */
-package com.avrgaming.civcraft.command.admin;
+package com.civcraft.command.admin;
 
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import com.avrgaming.civcraft.camp.Camp;
-import com.avrgaming.civcraft.command.CommandBase;
-import com.avrgaming.civcraft.exception.CivException;
-import com.avrgaming.civcraft.main.CivMessage;
-import com.avrgaming.civcraft.object.Resident;
+import com.civcraft.camp.Camp;
+import com.civcraft.command.CommandBase;
+import com.civcraft.exception.CivException;
+import com.civcraft.main.CivMessage;
+import com.civcraft.object.Resident;
 
 public class AdminCampCommand extends CommandBase {
 
@@ -39,6 +21,15 @@ public class AdminCampCommand extends CommandBase {
 		commands.put("destroy", "[name] - destroyes this camp.");
 		commands.put("setraidtime", "[name] - d:M:y:H:m sets the raid time.");
 		commands.put("rebuild", "rebuilds this camp template");
+		commands.put("setowner", "[camp] [res] set owner of a camp");
+	}
+	
+	public void setowner_cmd() throws CivException {
+		Camp camp = getNamedCamp(1);
+		Resident resident = getNamedResident(2);
+		camp.setOwner(resident);
+		camp.save();
+		CivMessage.sendSuccess(sender, "Added "+resident.getName()+" to camp owner in "+camp.getName());
 	}
 	
 	public void rebuild_cmd() throws CivException {

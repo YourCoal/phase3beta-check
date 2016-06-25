@@ -1,22 +1,4 @@
-/*************************************************************************
- * 
- * AVRGAMING LLC
- * __________________
- * 
- *  [2013] AVRGAMING LLC
- *  All Rights Reserved.
- * 
- * NOTICE:  All information contained herein is, and remains
- * the property of AVRGAMING LLC and its suppliers,
- * if any.  The intellectual and technical concepts contained
- * herein are proprietary to AVRGAMING LLC
- * and its suppliers and may be covered by U.S. and Foreign Patents,
- * patents in process, and are protected by trade secret or copyright law.
- * Dissemination of this information or reproduction of this material
- * is strictly forbidden unless prior written permission is obtained
- * from AVRGAMING LLC.
- */
-package com.avrgaming.civcraft.command.civ;
+package com.civcraft.command.civ;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -24,20 +6,20 @@ import java.util.ArrayList;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.avrgaming.civcraft.command.CommandBase;
-import com.avrgaming.civcraft.endgame.EndConditionDiplomacy;
-import com.avrgaming.civcraft.endgame.EndConditionScience;
-import com.avrgaming.civcraft.endgame.EndGameCondition;
-import com.avrgaming.civcraft.exception.CivException;
-import com.avrgaming.civcraft.main.CivGlobal;
-import com.avrgaming.civcraft.main.CivMessage;
-import com.avrgaming.civcraft.object.Buff;
-import com.avrgaming.civcraft.object.Civilization;
-import com.avrgaming.civcraft.object.Resident;
-import com.avrgaming.civcraft.object.Town;
-import com.avrgaming.civcraft.sessiondb.SessionEntry;
-import com.avrgaming.civcraft.util.CivColor;
-import com.avrgaming.civcraft.util.DecimalHelper;
+import com.civcraft.command.CommandBase;
+import com.civcraft.endgame.EndConditionDiplomacy;
+import com.civcraft.endgame.EndConditionScience;
+import com.civcraft.endgame.EndGameCondition;
+import com.civcraft.exception.CivException;
+import com.civcraft.main.CivGlobal;
+import com.civcraft.main.CivMessage;
+import com.civcraft.object.Buff;
+import com.civcraft.object.Civilization;
+import com.civcraft.object.Resident;
+import com.civcraft.object.Town;
+import com.civcraft.sessiondb.SessionEntry;
+import com.civcraft.util.CivColor;
+import com.civcraft.util.DecimalHelper;
 
 public class CivInfoCommand extends CommandBase {
 
@@ -195,10 +177,16 @@ public class CivInfoCommand extends CommandBase {
 			CivMessage.send(sender, CivColor.Green+"Leaders: "+CivColor.LightGreen+civ.getLeaderGroup().getMembersString());
 		}
 		
-		if (civ.getAdviserGroup() == null) {
-			CivMessage.send(sender, CivColor.Green+"Advisers: "+CivColor.Rose+"NONE");
+		if (civ.getDipAdviserGroup() == null) {
+			CivMessage.send(sender, CivColor.Green+"Diplomatic Advisers: "+CivColor.Rose+"NONE");
 		} else {
-			CivMessage.send(sender, CivColor.Green+"Advisers: "+CivColor.LightGreen+civ.getAdviserGroup().getMembersString());
+			CivMessage.send(sender, CivColor.Green+"Diplomatic Advisers: "+CivColor.LightGreen+civ.getDipAdviserGroup().getMembersString());
+		}
+		
+		if (civ.getEconAdviserGroup() == null) {
+			CivMessage.send(sender, CivColor.Green+"Economic Advisers: "+CivColor.Rose+"NONE");
+		} else {
+			CivMessage.send(sender, CivColor.Green+"Economic Advisers: "+CivColor.LightGreen+civ.getEconAdviserGroup().getMembersString());
 		}
 	    
 	    if (resident == null || civ.hasResident(resident)) {
@@ -208,7 +196,8 @@ public class CivInfoCommand extends CommandBase {
 					CivColor.Green+" Online: "+CivColor.LightGreen+civ.getOnlineResidents().size());
 	    }
 		
-		if (resident == null || civ.getLeaderGroup().hasMember(resident) || civ.getAdviserGroup().hasMember(resident) || isOP) {
+		if (resident == null || civ.getLeaderGroup().hasMember(resident) || civ.getDipAdviserGroup().hasMember(resident) ||
+				 civ.getEconAdviserGroup().hasMember(resident) || isOP) {
 			CivMessage.send(sender, CivColor.Green+"Treasury: "+CivColor.LightGreen+civ.getTreasury().getBalance()+CivColor.Green+" coins.");
 		}
 		

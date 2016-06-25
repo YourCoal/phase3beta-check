@@ -1,8 +1,8 @@
-package com.avrgaming.civcraft.components;
+package com.civcraft.components;
 
 import java.util.HashSet;
 
-import com.avrgaming.civcraft.structure.Buildable;
+import com.civcraft.structure.Buildable;
 
 public class ActivateOnBiome extends Component {
 	

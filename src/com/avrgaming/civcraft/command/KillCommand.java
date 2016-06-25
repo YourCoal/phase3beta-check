@@ -1,12 +1,12 @@
-package com.avrgaming.civcraft.command;
+package com.civcraft.command;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.avrgaming.civcraft.main.CivMessage;
-import com.avrgaming.civcraft.util.CivColor;
+import com.civcraft.main.CivMessage;
+import com.civcraft.util.CivColor;
 
 public class KillCommand implements CommandExecutor {
 

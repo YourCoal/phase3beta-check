@@ -16,7 +16,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from AVRGAMING LLC.
  */
-package com.avrgaming.civcraft.util;
+package com.civcraft.util;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -29,11 +29,11 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.inventory.ItemStack;
 
-import com.avrgaming.civcraft.exception.CivException;
-import com.avrgaming.civcraft.main.CivGlobal;
-import com.avrgaming.civcraft.main.CivLog;
-import com.avrgaming.civcraft.object.Town;
-import com.avrgaming.civcraft.structure.Buildable;
+import com.civcraft.exception.CivException;
+import com.civcraft.main.CivGlobal;
+import com.civcraft.main.CivLog;
+import com.civcraft.object.Town;
+import com.civcraft.structure.Buildable;
 
 public class ItemFrameStorage {	
 	
@@ -73,8 +73,12 @@ public class ItemFrameStorage {
 	}
 	
 	public ItemFrameStorage(Location location, BlockFace blockface) {
-			
+		CivLog.debug("world: "+location.getWorld().toString());
+		CivLog.debug("Entity: "+EntityType.ITEM_FRAME.toString());
+		CivLog.debug("location: "+location.toString());
+		CivLog.debug("Blockface: "+blockface.toString());
 		ItemFrame frame = (ItemFrame)location.getWorld().spawnEntity(location, EntityType.ITEM_FRAME);
+		CivLog.debug("ID: "+frame.getUniqueId());
 		//frame.setItem(new ItemStack(Material.BAKED_POTATO));
 		
 		this.frameID = frame.getUniqueId();

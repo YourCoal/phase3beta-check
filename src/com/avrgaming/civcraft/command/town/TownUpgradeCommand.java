@@ -16,17 +16,17 @@
  * is strictly forbidden unless prior written permission is obtained
  * from AVRGAMING LLC.
  */
-package com.avrgaming.civcraft.command.town;
+package com.civcraft.command.town;
 
 import org.apache.commons.lang.WordUtils;
 
-import com.avrgaming.civcraft.command.CommandBase;
-import com.avrgaming.civcraft.config.CivSettings;
-import com.avrgaming.civcraft.config.ConfigTownUpgrade;
-import com.avrgaming.civcraft.exception.CivException;
-import com.avrgaming.civcraft.main.CivMessage;
-import com.avrgaming.civcraft.object.Town;
-import com.avrgaming.civcraft.util.CivColor;
+import com.civcraft.command.CommandBase;
+import com.civcraft.config.CivSettings;
+import com.civcraft.config.ConfigTownUpgrade;
+import com.civcraft.exception.CivException;
+import com.civcraft.main.CivMessage;
+import com.civcraft.object.Town;
+import com.civcraft.util.CivColor;
 
 public class TownUpgradeCommand extends CommandBase {
 

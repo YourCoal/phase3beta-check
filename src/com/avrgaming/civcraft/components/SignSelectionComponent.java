@@ -16,7 +16,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from AVRGAMING LLC.
  */
-package com.avrgaming.civcraft.components;
+package com.civcraft.components;
 
 import java.util.HashMap;
 
@@ -24,9 +24,9 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 
-import com.avrgaming.civcraft.main.CivLog;
-import com.avrgaming.civcraft.threading.TaskMaster;
-import com.avrgaming.civcraft.util.BlockCoord;
+import com.civcraft.main.CivLog;
+import com.civcraft.threading.TaskMaster;
+import com.civcraft.util.BlockCoord;
 
 public class SignSelectionComponent extends Component {
 
@@ -130,7 +130,4 @@ public class SignSelectionComponent extends Component {
 		}
 		updateActionSign();
 	}
-	
-	
-	
 }

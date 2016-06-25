@@ -16,7 +16,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from AVRGAMING LLC.
  */
-package com.avrgaming.civcraft.main;
+package com.civcraft.main;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,7 +27,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -54,66 +53,62 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import com.avrgaming.civcraft.arena.ArenaTeam;
-import com.avrgaming.civcraft.camp.Camp;
-import com.avrgaming.civcraft.camp.CampBlock;
-import com.avrgaming.civcraft.camp.WarCamp;
-import com.avrgaming.civcraft.config.CivSettings;
-import com.avrgaming.civcraft.database.SQL;
-import com.avrgaming.civcraft.endgame.EndGameCondition;
-import com.avrgaming.civcraft.event.EventTimer;
-import com.avrgaming.civcraft.exception.CivException;
-import com.avrgaming.civcraft.exception.InvalidConfiguration;
-import com.avrgaming.civcraft.exception.InvalidNameException;
-import com.avrgaming.civcraft.exception.InvalidObjectException;
-import com.avrgaming.civcraft.items.BonusGoodie;
-import com.avrgaming.civcraft.object.Civilization;
-import com.avrgaming.civcraft.object.CultureChunk;
-import com.avrgaming.civcraft.object.CustomMapMarker;
-import com.avrgaming.civcraft.object.ProtectedBlock;
-import com.avrgaming.civcraft.object.Relation;
-import com.avrgaming.civcraft.object.Relation.Status;
-import com.avrgaming.civcraft.object.Resident;
-import com.avrgaming.civcraft.object.StructureBlock;
-import com.avrgaming.civcraft.object.StructureChest;
-import com.avrgaming.civcraft.object.StructureSign;
-import com.avrgaming.civcraft.object.Town;
-import com.avrgaming.civcraft.object.TownChunk;
-import com.avrgaming.civcraft.object.TradeGood;
-import com.avrgaming.civcraft.object.WallBlock;
-import com.avrgaming.civcraft.permission.PermissionGroup;
-import com.avrgaming.civcraft.populators.TradeGoodPreGenerate;
-import com.avrgaming.civcraft.questions.QuestionBaseTask;
-import com.avrgaming.civcraft.questions.QuestionResponseInterface;
-import com.avrgaming.civcraft.randomevents.RandomEvent;
-import com.avrgaming.civcraft.road.RoadBlock;
-import com.avrgaming.civcraft.sessiondb.SessionDatabase;
-import com.avrgaming.civcraft.sessiondb.SessionEntry;
-import com.avrgaming.civcraft.structure.Buildable;
-import com.avrgaming.civcraft.structure.Capitol;
-import com.avrgaming.civcraft.structure.Market;
-import com.avrgaming.civcraft.structure.Structure;
-import com.avrgaming.civcraft.structure.TownHall;
-import com.avrgaming.civcraft.structure.Wall;
-import com.avrgaming.civcraft.structure.farm.FarmChunk;
-import com.avrgaming.civcraft.structure.wonders.Wonder;
-import com.avrgaming.civcraft.template.Template;
-import com.avrgaming.civcraft.threading.TaskMaster;
-import com.avrgaming.civcraft.threading.tasks.CivLeaderQuestionTask;
-import com.avrgaming.civcraft.threading.tasks.CivQuestionTask;
-import com.avrgaming.civcraft.threading.tasks.CultureProcessAsyncTask;
-import com.avrgaming.civcraft.threading.tasks.PlayerQuestionTask;
-import com.avrgaming.civcraft.threading.tasks.UpdateTagBetweenCivsTask;
-import com.avrgaming.civcraft.threading.tasks.onLoadTask;
-import com.avrgaming.civcraft.util.BlockCoord;
-import com.avrgaming.civcraft.util.BukkitObjects;
-import com.avrgaming.civcraft.util.ChunkCoord;
-import com.avrgaming.civcraft.util.CivColor;
-import com.avrgaming.civcraft.util.ItemFrameStorage;
-import com.avrgaming.civcraft.util.ItemManager;
-import com.avrgaming.civcraft.war.War;
-import com.avrgaming.civcraft.war.WarRegen;
-import com.avrgaming.global.perks.PerkManager;
+import com.civcraft.camp.Camp;
+import com.civcraft.camp.CampBlock;
+import com.civcraft.camp.WarCamp;
+import com.civcraft.config.CivSettings;
+import com.civcraft.database.SQL;
+import com.civcraft.endgame.EndGameCondition;
+import com.civcraft.event.EventTimer;
+import com.civcraft.exception.CivException;
+import com.civcraft.exception.InvalidConfiguration;
+import com.civcraft.items.BonusGoodie;
+import com.civcraft.object.Civilization;
+import com.civcraft.object.CultureChunk;
+import com.civcraft.object.CustomMapMarker;
+import com.civcraft.object.ProtectedBlock;
+import com.civcraft.object.Relation;
+import com.civcraft.object.Relation.Status;
+import com.civcraft.object.Resident;
+import com.civcraft.object.StructureBlock;
+import com.civcraft.object.StructureChest;
+import com.civcraft.object.StructureSign;
+import com.civcraft.object.Town;
+import com.civcraft.object.TownChunk;
+import com.civcraft.object.TradeGood;
+import com.civcraft.object.WallBlock;
+import com.civcraft.permission.PermissionGroup;
+import com.civcraft.populators.TradeGoodPreGenerate;
+import com.civcraft.questions.QuestionBaseTask;
+import com.civcraft.questions.QuestionResponseInterface;
+import com.civcraft.randomevents.RandomEvent;
+import com.civcraft.road.RoadBlock;
+import com.civcraft.sessiondb.SessionDatabase;
+import com.civcraft.sessiondb.SessionEntry;
+import com.civcraft.structure.Buildable;
+import com.civcraft.structure.Capitol;
+import com.civcraft.structure.Market;
+import com.civcraft.structure.Structure;
+import com.civcraft.structure.TownHall;
+import com.civcraft.structure.Wall;
+import com.civcraft.structure.farm.FarmChunk;
+import com.civcraft.structure.wonders.Wonder;
+import com.civcraft.template.Template;
+import com.civcraft.threading.TaskMaster;
+import com.civcraft.threading.tasks.CivLeaderQuestionTask;
+import com.civcraft.threading.tasks.CivQuestionTask;
+import com.civcraft.threading.tasks.CultureProcessAsyncTask;
+import com.civcraft.threading.tasks.PlayerQuestionTask;
+import com.civcraft.threading.tasks.onLoadTask;
+import com.civcraft.util.BlockCoord;
+import com.civcraft.util.BukkitObjects;
+import com.civcraft.util.ChunkCoord;
+import com.civcraft.util.CivColor;
+import com.civcraft.util.ItemFrameStorage;
+import com.civcraft.util.ItemManager;
+import com.civcraft.war.War;
+import com.civcraft.war.WarRegen;
+import com.global.perks.PerkManager;
 
 public class CivGlobal {
 
@@ -158,7 +153,7 @@ public class CivGlobal {
 	public static HashSet<String> researchedTechs = new HashSet<String>();
 	
 	/* TODO change this to true for MC 1.8 */
-	public static boolean useUUID = false;
+	public static boolean useUUID = true;
 	
 	public static Map<Integer, Boolean> CivColorInUse = new ConcurrentHashMap<Integer, Boolean>();
 	public static TradeGoodPreGenerate preGenerator = new TradeGoodPreGenerate();
@@ -179,8 +174,11 @@ public class CivGlobal {
 	
 	//TODO convert this to completely static?
 	private static SessionDatabase sdb;
-
+	
+	public static boolean quarriesEnabled = true;
+	public static boolean fisheriesEnabled = true;
 	public static boolean trommelsEnabled = true;
+	
 	public static boolean towersEnabled = true;
 	public static boolean growthEnabled = true;
 	public static Boolean banWordsAlways = false;
@@ -219,7 +217,6 @@ public class CivGlobal {
 		loadTradeGoodies();
 		loadRandomEvents();
 		loadProtectedBlocks();
-		loadTeams();
 		EventTimer.loadGlobalEvents();
 		EndGameCondition.init();
 		War.init();
@@ -290,35 +287,7 @@ public class CivGlobal {
 	private static void loadTradeGoods() {
 		
 	}
-	
-	private static void loadTeams() throws SQLException {
-		Connection context = null;
-		ResultSet rs = null;
-		PreparedStatement ps = null;
-		
-		try {
-			context = SQL.getGameConnection();		
-			ps = context.prepareStatement("SELECT * FROM "+SQL.tb_prefix+ArenaTeam.TABLE_NAME);
-			rs = ps.executeQuery();
-	
-			while(rs.next()) {
-				try {
-					new ArenaTeam(rs);
-				} catch (InvalidNameException | InvalidObjectException
-						| CivException e) {
-					e.printStackTrace();
-				}
-			}
-	
-			Collections.sort(ArenaTeam.teamRankings);
-			Collections.reverse(ArenaTeam.teamRankings); //Lazy method.
-			
-			CivLog.info("Loaded "+ArenaTeam.arenaTeams.size()+" Arena Teams");
-		} finally {
-			SQL.close(rs, ps, context);
-		}
-	}
-	
+
 	private static void loadTradeGoodies() throws SQLException {
 		Connection context = null;
 		ResultSet rs = null;
@@ -904,8 +873,11 @@ public class CivGlobal {
 			if (civ.getLeaderGroup() != null) {
 				groups.add(civ.getLeaderGroup());
 			}
-			if (civ.getAdviserGroup() != null) {
-				groups.add(civ.getAdviserGroup());
+			if (civ.getDipAdviserGroup() != null) {
+				groups.add(civ.getDipAdviserGroup());
+			}
+			if (civ.getEconAdviserGroup() != null) {
+				groups.add(civ.getEconAdviserGroup());
 			}
 		}
 		
@@ -1188,8 +1160,13 @@ public class CivGlobal {
 		}
 	}
 
-	public static Date getNextHourlyTickDate() {
-		EventTimer hourly = EventTimer.timers.get("hourly");
+	public static Date getNextFirstHourlyTickDate() {
+		EventTimer hourly = EventTimer.timers.get("hourly1");
+		return hourly.getNext().getTime();
+	}
+	
+	public static Date getNextLastHourlyTickDate() {
+		EventTimer hourly = EventTimer.timers.get("hourly6");
 		return hourly.getNext().getTime();
 	}
 
@@ -1471,11 +1448,6 @@ public class CivGlobal {
 		}
 		out += otherCiv.getName();
 		CivMessage.global(out);
-		CivGlobal.updateTagsBetween(civ, otherCiv);
-	}
-	
-	private static void updateTagsBetween(Civilization civ, Civilization otherCiv) {
-		TaskMaster.asyncTask(new UpdateTagBetweenCivsTask(civ, otherCiv), 0);
 	}
 
 	public static void requestRelation(Civilization fromCiv, Civilization toCiv, String question, 
@@ -1541,9 +1513,8 @@ public class CivGlobal {
 			}
 		}
 	}
-
+	
 	public static boolean willInstantBreak(Material type) {
-
 		switch (type) {
 		case BED_BLOCK:
 		case BROWN_MUSHROOM:

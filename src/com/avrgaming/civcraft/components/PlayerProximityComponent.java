@@ -16,15 +16,15 @@
  * is strictly forbidden unless prior written permission is obtained
  * from AVRGAMING LLC.
  */
-package com.avrgaming.civcraft.components;
+package com.civcraft.components;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.concurrent.locks.ReentrantLock;
 
-import com.avrgaming.civcraft.cache.PlayerLocationCache;
-import com.avrgaming.civcraft.structure.Buildable;
-import com.avrgaming.civcraft.util.BlockCoord;
+import com.civcraft.cache.PlayerLocationCache;
+import com.civcraft.structure.Buildable;
+import com.civcraft.util.BlockCoord;
 
 public class PlayerProximityComponent extends Component {
 

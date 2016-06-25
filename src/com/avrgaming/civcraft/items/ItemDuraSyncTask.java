@@ -16,15 +16,15 @@
  * is strictly forbidden unless prior written permission is obtained
  * from AVRGAMING LLC.
  */
-package com.avrgaming.civcraft.items;
+package com.civcraft.items;
 
 import java.util.LinkedList;
 
 import org.bukkit.entity.Player;
 
-import com.avrgaming.civcraft.exception.CivException;
-import com.avrgaming.civcraft.listener.CustomItemManager;
-import com.avrgaming.civcraft.main.CivGlobal;
+import com.civcraft.exception.CivException;
+import com.civcraft.listener.CustomItemManager;
+import com.civcraft.main.CivGlobal;
 
 public class ItemDuraSyncTask implements Runnable {
 

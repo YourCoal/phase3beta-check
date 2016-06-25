@@ -1,37 +1,19 @@
-/*************************************************************************
- * 
- * AVRGAMING LLC
- * __________________
- * 
- *  [2013] AVRGAMING LLC
- *  All Rights Reserved.
- * 
- * NOTICE:  All information contained herein is, and remains
- * the property of AVRGAMING LLC and its suppliers,
- * if any.  The intellectual and technical concepts contained
- * herein are proprietary to AVRGAMING LLC
- * and its suppliers and may be covered by U.S. and Foreign Patents,
- * patents in process, and are protected by trade secret or copyright law.
- * Dissemination of this information or reproduction of this material
- * is strictly forbidden unless prior written permission is obtained
- * from AVRGAMING LLC.
- */
-package com.avrgaming.civcraft.command.civ;
+package com.civcraft.command.civ;
 
 import org.bukkit.ChatColor;
 
-import com.avrgaming.civcraft.command.CommandBase;
-import com.avrgaming.civcraft.exception.CivException;
-import com.avrgaming.civcraft.main.CivGlobal;
-import com.avrgaming.civcraft.main.CivMessage;
-import com.avrgaming.civcraft.object.Civilization;
-import com.avrgaming.civcraft.object.Town;
-import com.avrgaming.civcraft.questions.DiplomacyGiftResponse;
-import com.avrgaming.civcraft.questions.QuestionResponseInterface;
-import com.avrgaming.civcraft.threading.TaskMaster;
-import com.avrgaming.civcraft.threading.tasks.CivQuestionTask;
-import com.avrgaming.civcraft.util.CivColor;
-import com.avrgaming.civcraft.war.War;
+import com.civcraft.command.CommandBase;
+import com.civcraft.exception.CivException;
+import com.civcraft.main.CivGlobal;
+import com.civcraft.main.CivMessage;
+import com.civcraft.object.Civilization;
+import com.civcraft.object.Town;
+import com.civcraft.questions.DiplomacyGiftResponse;
+import com.civcraft.questions.QuestionResponseInterface;
+import com.civcraft.threading.TaskMaster;
+import com.civcraft.threading.tasks.CivQuestionTask;
+import com.civcraft.util.CivColor;
+import com.civcraft.war.War;
 
 public class CivDiplomacyGiftCommand extends CommandBase {
 

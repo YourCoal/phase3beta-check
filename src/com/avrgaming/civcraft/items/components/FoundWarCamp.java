@@ -1,4 +1,4 @@
-package com.avrgaming.civcraft.items.components;
+package com.civcraft.items.components;
 
 import gpl.AttributeUtil;
 
@@ -7,19 +7,19 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import com.avrgaming.civcraft.config.CivSettings;
-import com.avrgaming.civcraft.config.ConfigBuildableInfo;
-import com.avrgaming.civcraft.exception.CivException;
-import com.avrgaming.civcraft.exception.InvalidConfiguration;
-import com.avrgaming.civcraft.interactive.InteractiveWarCampFound;
-import com.avrgaming.civcraft.main.CivGlobal;
-import com.avrgaming.civcraft.main.CivMessage;
-import com.avrgaming.civcraft.object.Resident;
-import com.avrgaming.civcraft.structure.Buildable;
-import com.avrgaming.civcraft.threading.TaskMaster;
-import com.avrgaming.civcraft.util.CallbackInterface;
-import com.avrgaming.civcraft.util.CivColor;
-import com.avrgaming.civcraft.war.War;
+import com.civcraft.config.CivSettings;
+import com.civcraft.config.ConfigBuildableInfo;
+import com.civcraft.exception.CivException;
+import com.civcraft.exception.InvalidConfiguration;
+import com.civcraft.interactive.InteractiveWarCampFound;
+import com.civcraft.main.CivGlobal;
+import com.civcraft.main.CivMessage;
+import com.civcraft.object.Resident;
+import com.civcraft.structure.Buildable;
+import com.civcraft.threading.TaskMaster;
+import com.civcraft.util.CallbackInterface;
+import com.civcraft.util.CivColor;
+import com.civcraft.war.War;
 
 public class FoundWarCamp extends ItemComponent implements CallbackInterface {
 	
@@ -48,8 +48,8 @@ public class FoundWarCamp extends ItemComponent implements CallbackInterface {
 		}
 		
 		if (!resident.getCiv().getLeaderGroup().hasMember(resident) &&
-			!resident.getCiv().getAdviserGroup().hasMember(resident)) {
-			throw new CivException("You must be a leader or adviser of the civilization to found a war camp.");
+			!resident.getCiv().getDipAdviserGroup().hasMember(resident)) {
+			throw new CivException("You must be a leader or diplomatic adviser of the civilization to found a war camp.");
 		}
 		
 		if (!War.isWarTime()) {

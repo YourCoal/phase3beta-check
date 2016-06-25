@@ -1,4 +1,4 @@
-package com.avrgaming.civcraft.config;
+package com.civcraft.config;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -10,7 +10,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.ShapedRecipe;
 
-import com.avrgaming.civcraft.util.ItemManager;
+import com.civcraft.util.ItemManager;
 
 public class ConfigRemovedRecipes {
 	public int type_id;

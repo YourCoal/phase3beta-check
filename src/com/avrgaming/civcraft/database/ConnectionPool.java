@@ -1,4 +1,4 @@
-package com.avrgaming.civcraft.database;
+package com.civcraft.database;
 
 import java.sql.Connection;
 import java.sql.SQLException;

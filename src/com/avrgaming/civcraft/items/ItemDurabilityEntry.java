@@ -16,7 +16,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from AVRGAMING LLC.
  */
-package com.avrgaming.civcraft.items;
+package com.civcraft.items;
 
 import org.bukkit.inventory.ItemStack;
 

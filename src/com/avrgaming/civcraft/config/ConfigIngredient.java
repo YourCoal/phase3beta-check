@@ -1,4 +1,4 @@
-package com.avrgaming.civcraft.config;
+package com.civcraft.config;
 
 
 public class ConfigIngredient {

@@ -1,22 +1,4 @@
-/*************************************************************************
- * 
- * AVRGAMING LLC
- * __________________
- * 
- *  [2013] AVRGAMING LLC
- *  All Rights Reserved.
- * 
- * NOTICE:  All information contained herein is, and remains
- * the property of AVRGAMING LLC and its suppliers,
- * if any.  The intellectual and technical concepts contained
- * herein are proprietary to AVRGAMING LLC
- * and its suppliers and may be covered by U.S. and Foreign Patents,
- * patents in process, and are protected by trade secret or copyright law.
- * Dissemination of this information or reproduction of this material
- * is strictly forbidden unless prior written permission is obtained
- * from AVRGAMING LLC.
- */
-package com.avrgaming.civcraft.components;
+package com.civcraft.components;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,62 +6,45 @@ import java.util.Map;
 
 import org.bukkit.inventory.ItemStack;
 
-import com.avrgaming.civcraft.config.CivSettings;
-import com.avrgaming.civcraft.config.ConfigCottageLevel;
-import com.avrgaming.civcraft.config.ConfigMineLevel;
-import com.avrgaming.civcraft.exception.CivException;
-import com.avrgaming.civcraft.main.CivData;
-import com.avrgaming.civcraft.main.CivGlobal;
-import com.avrgaming.civcraft.main.CivLog;
-import com.avrgaming.civcraft.sessiondb.SessionEntry;
-import com.avrgaming.civcraft.structure.Buildable;
-import com.avrgaming.civcraft.structure.Cottage;
-import com.avrgaming.civcraft.structure.Mine;
-import com.avrgaming.civcraft.threading.TaskMaster;
-import com.avrgaming.civcraft.util.ItemManager;
-import com.avrgaming.civcraft.util.MultiInventory;
+import com.civcraft.config.CivSettings;
+import com.civcraft.config.ConfigCottageLevel;
+import com.civcraft.config.ConfigLabLevel;
+import com.civcraft.config.ConfigMineLevel;
+import com.civcraft.exception.CivException;
+import com.civcraft.main.CivData;
+import com.civcraft.main.CivGlobal;
+import com.civcraft.main.CivLog;
+import com.civcraft.sessiondb.SessionEntry;
+import com.civcraft.structure.Buildable;
+import com.civcraft.structure.Cottage;
+import com.civcraft.structure.Lab;
+import com.civcraft.structure.Mine;
+import com.civcraft.threading.TaskMaster;
+import com.civcraft.util.ItemManager;
+import com.civcraft.util.MultiInventory;
 
 public class ConsumeLevelComponent extends Component {
 
-	/* Current level we're operating at. */
 	private int level;
-	
-	/* Current count we have in this level. */
 	private int count;
-	
-	/* Last result. */
 	private Result lastResult;
-	
-	/* Consumption mod rate, can be used to increase or decrease consumption rates. */
 	private double consumeRate;
 	
-	/* Buildable this component is attached to. */
-//	private Buildable buildable;
-	
-	/* 
-	 * The first key is the level id, followed by a hashmap containing integer, amount entries
-	 * for each item consumed for that level. For each item in the hashmap, we must have ALL of the items in the inventory. 
-	 */
+	/* The first key is the level id, followed by a hashmap containing integer, amount entries
+	 * for each item consumed for that level. For each item in the hashmap, we must have ALL of the items in the inventory. */
 	private HashMap<Integer, Map<Integer, Integer>> consumptions = new HashMap<Integer, Map<Integer, Integer>>();
 	
-	/*
-	 * Contains a list of equivilent exchanges 
-	 */
+	/* Contains a list of equivilent exchanges */
 	private HashMap<Integer, ConsumeLevelEquivExchange> exchanges = new HashMap<Integer, ConsumeLevelEquivExchange>();
 	
 	/* Last found counts from call to hasEnoughToConsume */
 	private Map<Integer, Integer> foundCounts;
 	
-	/*
-	 * Contains a hashmap of levels and counts configured for this component.
-	 */
+	/* Contains a hashmap of levels and counts configured for this component. */
 	private HashMap<Integer, Integer> levelCounts = new HashMap<Integer, Integer>();
 		
 	/* Inventory we're trying to pull from. */
 	private MultiInventory source;
-	
-//	consumeComp.createComponent(this);
-
 	
 	@Override
 	public void createComponent(Buildable buildable, boolean async) {
@@ -95,15 +60,19 @@ public class ConsumeLevelComponent extends Component {
 		} else if (buildable instanceof Mine) {
 			for (ConfigMineLevel lvl : CivSettings.mineLevels.values()) {
 				this.addLevel(lvl.level, lvl.count);
-				
 				HashMap<Integer, Integer> redstoneAmounts = new HashMap<Integer, Integer>();
 				redstoneAmounts.put(CivData.REDSTONE_DUST, lvl.amount);
 				this.setConsumes(lvl.level, redstoneAmounts);
 			}
+		} else if (buildable instanceof Lab) {
+			for (ConfigLabLevel lvl : CivSettings.labLevels.values()) {
+				this.addLevel(lvl.level, lvl.count);
+				HashMap<Integer, Integer> lapisAmounts = new HashMap<Integer, Integer>();
+				lapisAmounts.put(CivData.FISH, lvl.amount);
+				this.setConsumes(lvl.level, lapisAmounts);
+			}
 		}
-		
 	}
-	
 	
 	/* Possible Results. */
 	public enum Result {

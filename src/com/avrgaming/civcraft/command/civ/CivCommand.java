@@ -1,22 +1,4 @@
-/*************************************************************************
- * 
- * AVRGAMING LLC
- * __________________
- * 
- *  [2013] AVRGAMING LLC
- *  All Rights Reserved.
- * 
- * NOTICE:  All information contained herein is, and remains
- * the property of AVRGAMING LLC and its suppliers,
- * if any.  The intellectual and technical concepts contained
- * herein are proprietary to AVRGAMING LLC
- * and its suppliers and may be covered by U.S. and Foreign Patents,
- * patents in process, and are protected by trade secret or copyright law.
- * Dissemination of this information or reproduction of this material
- * is strictly forbidden unless prior written permission is obtained
- * from AVRGAMING LLC.
- */
-package com.avrgaming.civcraft.command.civ;
+package com.civcraft.command.civ;
 
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -29,21 +11,21 @@ import java.util.TimeZone;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import com.avrgaming.civcraft.command.CommandBase;
-import com.avrgaming.civcraft.config.CivSettings;
-import com.avrgaming.civcraft.endgame.EndConditionDiplomacy;
-import com.avrgaming.civcraft.endgame.EndGameCondition;
-import com.avrgaming.civcraft.exception.CivException;
-import com.avrgaming.civcraft.exception.InvalidConfiguration;
-import com.avrgaming.civcraft.main.CivGlobal;
-import com.avrgaming.civcraft.main.CivMessage;
-import com.avrgaming.civcraft.object.Civilization;
-import com.avrgaming.civcraft.object.Relation.Status;
-import com.avrgaming.civcraft.object.Resident;
-import com.avrgaming.civcraft.object.Town;
-import com.avrgaming.civcraft.sessiondb.SessionEntry;
-import com.avrgaming.civcraft.util.CivColor;
-import com.avrgaming.civcraft.war.War;
+import com.civcraft.command.CommandBase;
+import com.civcraft.config.CivSettings;
+import com.civcraft.endgame.EndConditionDiplomacy;
+import com.civcraft.endgame.EndGameCondition;
+import com.civcraft.exception.CivException;
+import com.civcraft.exception.InvalidConfiguration;
+import com.civcraft.main.CivGlobal;
+import com.civcraft.main.CivMessage;
+import com.civcraft.object.Civilization;
+import com.civcraft.object.Relation.Status;
+import com.civcraft.object.Resident;
+import com.civcraft.object.Town;
+import com.civcraft.sessiondb.SessionEntry;
+import com.civcraft.util.CivColor;
+import com.civcraft.war.War;
 
 public class CivCommand extends CommandBase {
 
@@ -66,10 +48,43 @@ public class CivCommand extends CommandBase {
 		commands.put("dip", "Manage civilization's diplomacy.");
 		commands.put("victory", "Show which civs are close to victory.");
 		commands.put("votes", "Shows the diplomatic votes for all civs.");
+		commands.put("vote", "Diplomatically vote for civs.");
 		commands.put("top5", "Show the top 5 civilizations in the world.");
 		commands.put("disbandtown", "[town] Disbands this town. Mayor must also issue /town disbandtown");
 		commands.put("revolution", "stages a revolution for the mother civilization!");
 		commands.put("claimleader", "claim yourself as leader of this civ. All current leaders must be inactive.");
+	}
+	
+	public void vote_cmd() throws CivException {
+		if (args.length < 2) {
+			CivMessage.sendError(sender, "/civ vote [civ name] - votes for your favorite civ for a diplomatic victory!");
+			return;
+		}
+
+		if (sender instanceof Player) {
+			Player player = (Player)sender;
+			Resident resident = CivGlobal.getResident(player);
+			
+			if (!resident.hasTown()) {
+				CivMessage.sendError(sender, "You must be a member of a town in order to cast a vote.");
+				return;
+			}
+			
+			Civilization civ = CivGlobal.getCiv(args[1]);
+			if (civ == null) {
+				CivMessage.sendError(sender, "Couldn't find eligable civ named '"+args[1]+"'.");
+				return;
+			}
+			
+			if (!EndConditionDiplomacy.canPeopleVote()) {
+				CivMessage.sendError(sender, "Council of Eight not yet built. Cannot vote for civs until then.");
+				return;
+			}
+			EndConditionDiplomacy.addVote(civ, resident);
+			return;
+		} else {
+			return;
+		}
 	}
 	
 	public void claimleader_cmd() throws CivException {
@@ -244,7 +259,7 @@ public class CivCommand extends CommandBase {
 //	}
 	
 	public void disbandtown_cmd() throws CivException {
-		this.validLeaderAdvisor();
+		this.validLeader();
 		Town town = this.getNamedTown(1);
 		
 		if (town.getMotherCiv() != null) {
@@ -322,8 +337,11 @@ public class CivCommand extends CommandBase {
 		cal.setTime(CivGlobal.getNextUpkeepDate());
 		out.add(CivColor.Green+"Next Upkeep: "+CivColor.LightGreen+sdf.format(cal.getTime()));
 		
-		cal.setTime(CivGlobal.getNextHourlyTickDate());
-		out.add(CivColor.Green+"Next Hourly Tick: "+CivColor.LightGreen+sdf.format(cal.getTime()));
+		cal.setTime(CivGlobal.getNextFirstHourlyTickDate());
+		out.add(CivColor.Green+"Hourly Tick Begins: "+CivColor.LightGreen+sdf.format(cal.getTime()));
+		
+		cal.setTime(CivGlobal.getNextLastHourlyTickDate());
+		out.add(CivColor.Green+"Hourly Tick Ends: "+CivColor.LightGreen+sdf.format(cal.getTime()));
 		
 		cal.setTime(CivGlobal.getNextRepoTime());
 		out.add(CivColor.Green+"Next Trade Good Repo: "+CivColor.LightGreen+sdf.format(cal.getTime()));

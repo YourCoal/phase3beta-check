@@ -16,17 +16,17 @@
  * is strictly forbidden unless prior written permission is obtained
  * from AVRGAMING LLC.
  */
-package com.avrgaming.civcraft.command.town;
+package com.civcraft.command.town;
 
 import java.util.ArrayList;
 
-import com.avrgaming.civcraft.command.CommandBase;
-import com.avrgaming.civcraft.config.ConfigTownUpgrade;
-import com.avrgaming.civcraft.exception.CivException;
-import com.avrgaming.civcraft.main.CivMessage;
-import com.avrgaming.civcraft.object.Town;
-import com.avrgaming.civcraft.structure.Library;
-import com.avrgaming.civcraft.structure.Store;
+import com.civcraft.command.CommandBase;
+import com.civcraft.config.ConfigTownUpgrade;
+import com.civcraft.exception.CivException;
+import com.civcraft.main.CivMessage;
+import com.civcraft.object.Town;
+import com.civcraft.structure.Library;
+import com.civcraft.structure.Store;
 
 public class TownResetCommand extends CommandBase {
 

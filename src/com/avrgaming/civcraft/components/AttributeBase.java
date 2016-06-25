@@ -1,4 +1,4 @@
-package com.avrgaming.civcraft.components;
+package com.civcraft.components;
 
 public abstract class AttributeBase extends Component {	
 	public abstract double getGenerated();

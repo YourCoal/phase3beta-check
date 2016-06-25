@@ -16,9 +16,9 @@
  * is strictly forbidden unless prior written permission is obtained
  * from AVRGAMING LLC.
  */
-package com.avrgaming.civcraft.interactive;
+package com.civcraft.interactive;
 
-import com.avrgaming.civcraft.object.Resident;
+import com.civcraft.object.Resident;
 
 public interface InteractiveResponse {
 	void respond(String message, Resident resident);

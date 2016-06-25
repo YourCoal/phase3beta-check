@@ -1,6 +1,6 @@
-package com.avrgaming.civcraft.components;
+package com.civcraft.components;
 
-import com.avrgaming.civcraft.structure.Buildable;
+import com.civcraft.structure.Buildable;
 
 public class AttributeWarUnhappiness extends Component {
 

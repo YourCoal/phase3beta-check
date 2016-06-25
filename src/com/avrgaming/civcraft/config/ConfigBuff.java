@@ -16,15 +16,15 @@
  * is strictly forbidden unless prior written permission is obtained
  * from AVRGAMING LLC.
  */
-package com.avrgaming.civcraft.config;
+package com.civcraft.config;
 
 import java.util.List;
 import java.util.Map;
 
 import org.bukkit.configuration.file.FileConfiguration;
 
-import com.avrgaming.civcraft.main.CivLog;
-import com.avrgaming.civcraft.util.CivColor;
+import com.civcraft.main.CivLog;
+import com.civcraft.util.CivColor;
 
 public class ConfigBuff {
 	public String id;

@@ -16,7 +16,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from AVRGAMING LLC.
  */
-package com.avrgaming.civcraft.components;
+package com.civcraft.components;
 
 import org.bukkit.entity.Player;
 

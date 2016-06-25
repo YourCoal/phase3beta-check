@@ -1,9 +1,10 @@
-package com.avrgaming.civcraft.util;
+package com.civcraft.util;
 
 import org.bukkit.entity.Player;
 import org.kitteh.vanish.staticaccess.VanishNoPacket;
 import org.kitteh.vanish.staticaccess.VanishNotLoadedException;
 
+@SuppressWarnings("deprecation")
 public class VanishNoPacketUtil {
 
 	public static boolean isVanished(Player player) {

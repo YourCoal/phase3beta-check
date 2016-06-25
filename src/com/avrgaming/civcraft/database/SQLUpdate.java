@@ -16,11 +16,11 @@
  * is strictly forbidden unless prior written permission is obtained
  * from AVRGAMING LLC.
  */
-package com.avrgaming.civcraft.database;
+package com.civcraft.database;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import com.avrgaming.civcraft.object.SQLObject;
+import com.civcraft.object.SQLObject;
 
 public class SQLUpdate implements Runnable {
 	

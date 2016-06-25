@@ -1,4 +1,4 @@
-package com.avrgaming.civcraft.items.components;
+package com.civcraft.items.components;
 
 import gpl.AttributeUtil;
 

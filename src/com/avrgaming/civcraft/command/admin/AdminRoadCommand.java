@@ -1,4 +1,4 @@
-package com.avrgaming.civcraft.command.admin;
+package com.civcraft.command.admin;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -6,12 +6,12 @@ import java.util.Date;
 
 import org.bukkit.entity.Player;
 
-import com.avrgaming.civcraft.command.CommandBase;
-import com.avrgaming.civcraft.exception.CivException;
-import com.avrgaming.civcraft.main.CivMessage;
-import com.avrgaming.civcraft.object.Town;
-import com.avrgaming.civcraft.road.Road;
-import com.avrgaming.civcraft.structure.Buildable;
+import com.civcraft.command.CommandBase;
+import com.civcraft.exception.CivException;
+import com.civcraft.main.CivMessage;
+import com.civcraft.object.Town;
+import com.civcraft.road.Road;
+import com.civcraft.structure.Buildable;
 
 public class AdminRoadCommand extends CommandBase {
 

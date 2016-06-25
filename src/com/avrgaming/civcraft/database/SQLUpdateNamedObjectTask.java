@@ -16,12 +16,12 @@
  * is strictly forbidden unless prior written permission is obtained
  * from AVRGAMING LLC.
  */
-package com.avrgaming.civcraft.database;
+package com.civcraft.database;
 
 import java.sql.SQLException;
 import java.util.HashMap;
 
-import com.avrgaming.civcraft.object.NamedObject;
+import com.civcraft.object.NamedObject;
 
 public class SQLUpdateNamedObjectTask implements Runnable {
 

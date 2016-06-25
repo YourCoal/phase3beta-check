@@ -16,18 +16,18 @@
  * is strictly forbidden unless prior written permission is obtained
  * from AVRGAMING LLC.
  */
-package com.avrgaming.civcraft.structure;
+package com.civcraft.structure;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.bukkit.Location;
 
-import com.avrgaming.civcraft.components.ProjectileArrowComponent;
-import com.avrgaming.civcraft.exception.CivException;
-import com.avrgaming.civcraft.object.Buff;
-import com.avrgaming.civcraft.object.Town;
-import com.avrgaming.civcraft.util.BlockCoord;
+import com.civcraft.components.ProjectileArrowComponent;
+import com.civcraft.exception.CivException;
+import com.civcraft.object.Buff;
+import com.civcraft.object.Town;
+import com.civcraft.util.BlockCoord;
 
 public class ArrowTower extends Structure {
 
@@ -49,10 +49,7 @@ public class ArrowTower extends Structure {
 		arrowComponent = new ProjectileArrowComponent(this, this.getCenterLocation().getLocation());
 		arrowComponent.createComponent(this);
 	}
-
-	/**
-	 * @return the damage
-	 */
+	
 	public int getDamage() {
 		double rate = 1;
 		rate += this.getTown().getBuffManager().getEffectiveDouble(Buff.FIRE_BOMB);
@@ -68,30 +65,20 @@ public class ArrowTower extends Structure {
 		}
 		return (int) (info.max_hitpoints * rate);
 	}
-
-	/**
-	 * @param damage the damage to set
-	 */
+	
 	public void setDamage(int damage) {
 		arrowComponent.setDamage(damage);
 	}
 	
-	/**
-	 * @return the power
-	 */
 	public double getPower() {
 		return arrowComponent.getPower();
 	}
-
-	/**
-	 * @param power the power to set
-	 */
+	
 	public void setPower(double power) {
 		arrowComponent.setPower(power);
 	}
-
+	
 	public void setTurretLocation(BlockCoord absCoord) {
 		arrowComponent.setTurretLocation(absCoord);
-	}	
-
+	}
 }

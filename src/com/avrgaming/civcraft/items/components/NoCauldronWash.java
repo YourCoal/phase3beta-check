@@ -1,4 +1,4 @@
-package com.avrgaming.civcraft.items.components;
+package com.civcraft.items.components;
 
 import gpl.AttributeUtil;
 
@@ -6,8 +6,8 @@ import org.bukkit.Material;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import com.avrgaming.civcraft.util.BlockCoord;
-import com.avrgaming.civcraft.util.ItemManager;
+import com.civcraft.util.BlockCoord;
+import com.civcraft.util.ItemManager;
 
 public class NoCauldronWash extends ItemComponent {
 

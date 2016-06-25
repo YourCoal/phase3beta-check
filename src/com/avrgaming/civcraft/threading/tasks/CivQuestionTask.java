@@ -16,17 +16,17 @@
  * is strictly forbidden unless prior written permission is obtained
  * from AVRGAMING LLC.
  */
-package com.avrgaming.civcraft.threading.tasks;
+package com.civcraft.threading.tasks;
 
 import org.bukkit.entity.Player;
 
-import com.avrgaming.civcraft.exception.CivException;
-import com.avrgaming.civcraft.main.CivGlobal;
-import com.avrgaming.civcraft.main.CivMessage;
-import com.avrgaming.civcraft.object.Civilization;
-import com.avrgaming.civcraft.object.Resident;
-import com.avrgaming.civcraft.questions.QuestionResponseInterface;
-import com.avrgaming.civcraft.util.CivColor;
+import com.civcraft.exception.CivException;
+import com.civcraft.main.CivGlobal;
+import com.civcraft.main.CivMessage;
+import com.civcraft.object.Civilization;
+import com.civcraft.object.Resident;
+import com.civcraft.questions.QuestionResponseInterface;
+import com.civcraft.util.CivColor;
 
 public class CivQuestionTask implements Runnable {
 	
@@ -70,7 +70,14 @@ public class CivQuestionTask implements Runnable {
 			}
 		}
 		
-		for (Resident res : askedCiv.getAdviserGroup().getMemberList()) {
+		for (Resident res : askedCiv.getDipAdviserGroup().getMemberList()) {
+			try {
+				askPlayer(CivGlobal.getPlayer(res));
+			} catch (CivException e) {
+			}
+		}
+		
+		for (Resident res : askedCiv.getEconAdviserGroup().getMemberList()) {
 			try {
 				askPlayer(CivGlobal.getPlayer(res));
 			} catch (CivException e) {
@@ -99,7 +106,14 @@ public class CivQuestionTask implements Runnable {
 			}
 		}
 		
-		for (Resident res : askedCiv.getAdviserGroup().getMemberList()) {
+		for (Resident res : askedCiv.getDipAdviserGroup().getMemberList()) {
+			try {
+				notifyExpired(CivGlobal.getPlayer(res));
+			} catch (CivException e) {
+			}
+		}
+		
+		for (Resident res : askedCiv.getEconAdviserGroup().getMemberList()) {
 			try {
 				notifyExpired(CivGlobal.getPlayer(res));
 			} catch (CivException e) {

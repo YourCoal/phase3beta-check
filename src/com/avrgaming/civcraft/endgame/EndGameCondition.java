@@ -1,15 +1,15 @@
-package com.avrgaming.civcraft.endgame;
+package com.civcraft.endgame;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.avrgaming.civcraft.config.CivSettings;
-import com.avrgaming.civcraft.main.CivGlobal;
-import com.avrgaming.civcraft.main.CivLog;
-import com.avrgaming.civcraft.main.CivMessage;
-import com.avrgaming.civcraft.object.Civilization;
-import com.avrgaming.civcraft.sessiondb.SessionEntry;
-import com.avrgaming.civcraft.util.CivColor;
+import com.civcraft.config.CivSettings;
+import com.civcraft.main.CivGlobal;
+import com.civcraft.main.CivLog;
+import com.civcraft.main.CivMessage;
+import com.civcraft.object.Civilization;
+import com.civcraft.sessiondb.SessionEntry;
+import com.civcraft.util.CivColor;
 
 public abstract class EndGameCondition {
 
@@ -24,7 +24,7 @@ public abstract class EndGameCondition {
 	
 	public static void init() {
 		for (ConfigEndCondition configEnd : CivSettings.endConditions.values()) {
-			String className = "com.avrgaming.civcraft.endgame."+configEnd.className;
+			String className = "com.civcraft.endgame."+configEnd.className;
 			Class<?> someClass;
 			
 			try {

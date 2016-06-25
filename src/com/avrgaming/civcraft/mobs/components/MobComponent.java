@@ -1,9 +1,9 @@
-package com.avrgaming.civcraft.mobs.components;
+package com.civcraft.mobs.components;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
-import com.avrgaming.civcraft.mobs.CommonCustomMob;
+import com.civcraft.mobs.CommonCustomMob;
 
 public class MobComponent {
 

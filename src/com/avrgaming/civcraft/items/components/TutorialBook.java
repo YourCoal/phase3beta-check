@@ -1,4 +1,4 @@
-package com.avrgaming.civcraft.items.components;
+package com.civcraft.items.components;
 
 import gpl.AttributeUtil;
 
@@ -6,8 +6,8 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import com.avrgaming.civcraft.tutorial.CivTutorial;
-import com.avrgaming.civcraft.util.CivColor;
+import com.civcraft.tutorial.CivTutorial;
+import com.civcraft.util.CivColor;
 
 public class TutorialBook extends ItemComponent {
 

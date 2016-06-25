@@ -1,14 +1,14 @@
-package com.avrgaming.civcraft.endgame;
+package com.civcraft.endgame;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-import com.avrgaming.civcraft.main.CivGlobal;
-import com.avrgaming.civcraft.object.Civilization;
-import com.avrgaming.civcraft.object.Town;
-import com.avrgaming.civcraft.sessiondb.SessionEntry;
-import com.avrgaming.civcraft.structure.wonders.Wonder;
+import com.civcraft.main.CivGlobal;
+import com.civcraft.object.Civilization;
+import com.civcraft.object.Town;
+import com.civcraft.sessiondb.SessionEntry;
+import com.civcraft.structure.wonders.Wonder;
 
 public class EndConditionConquest extends EndGameCondition {
 

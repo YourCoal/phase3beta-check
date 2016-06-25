@@ -1,4 +1,4 @@
-package com.avrgaming.civcraft.config;
+package com.civcraft.config;
 
 import java.util.Collection;
 import java.util.HashMap;

@@ -1,4 +1,4 @@
-package com.avrgaming.civcraft.interactive;
+package com.civcraft.interactive;
 
 public class InteractiveCapitulateCommand {
 

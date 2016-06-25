@@ -1,5 +1,4 @@
-package com.avrgaming.civcraft.mobs;
-
+package com.civcraft.mobs;
 
 public class MobDrop {
 	public String craftMatId;

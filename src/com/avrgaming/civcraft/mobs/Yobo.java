@@ -1,33 +1,36 @@
-package com.avrgaming.civcraft.mobs;
+package com.civcraft.mobs;
 
 import java.util.LinkedList;
 
-import net.minecraft.server.v1_7_R4.DamageSource;
-import net.minecraft.server.v1_7_R4.Entity;
-import net.minecraft.server.v1_7_R4.EntityCreature;
-import net.minecraft.server.v1_7_R4.EntityDamageSource;
-import net.minecraft.server.v1_7_R4.EntityHuman;
-import net.minecraft.server.v1_7_R4.EntityInsentient;
-import net.minecraft.server.v1_7_R4.PathfinderGoalHurtByTarget;
-import net.minecraft.server.v1_7_R4.PathfinderGoalLookAtPlayer;
-import net.minecraft.server.v1_7_R4.PathfinderGoalMeleeAttack;
-import net.minecraft.server.v1_7_R4.PathfinderGoalRandomStroll;
-import net.minecraft.server.v1_7_R4.PathfinderGoalSelector;
+import net.minecraft.server.v1_8_R3.DamageSource;
+import net.minecraft.server.v1_8_R3.Entity;
+import net.minecraft.server.v1_8_R3.EntityCreature;
+import net.minecraft.server.v1_8_R3.EntityDamageSource;
+import net.minecraft.server.v1_8_R3.EntityHuman;
+import net.minecraft.server.v1_8_R3.EntityInsentient;
+import net.minecraft.server.v1_8_R3.PathfinderGoalHurtByTarget;
+import net.minecraft.server.v1_8_R3.PathfinderGoalLookAtPlayer;
+import net.minecraft.server.v1_8_R3.PathfinderGoalMeleeAttack;
+import net.minecraft.server.v1_8_R3.PathfinderGoalRandomStroll;
+import net.minecraft.server.v1_8_R3.PathfinderGoalSelector;
 
+import org.bukkit.Material;
 import org.bukkit.block.Biome;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
 
-import com.avrgaming.civcraft.exception.CivException;
-import com.avrgaming.civcraft.main.CivLog;
-import com.avrgaming.civcraft.mobs.MobSpawner.CustomMobLevel;
-import com.avrgaming.civcraft.mobs.MobSpawner.CustomMobType;
-import com.avrgaming.civcraft.mobs.components.MobComponentDefense;
-import com.avrgaming.mob.ICustomMob;
-import com.avrgaming.mob.MobBaseZombie;
+import com.civcraft.exception.CivException;
+import com.civcraft.main.CivLog;
+import com.civcraft.mobs.MobSpawner.CustomMobLevel;
+import com.civcraft.mobs.MobSpawner.CustomMobType;
+import com.civcraft.mobs.components.MobComponentDefense;
+import com.civcraft.util.ItemManager;
+
+import moblib.mob.ICustomMob;
+import moblib.mob.MobBaseZombie;
 
 public class Yobo extends CommonCustomMob implements ICustomMob {
-
+	
 	private String entityType = MobBaseZombie.class.getName();
 	private boolean angry = false;
 	
@@ -35,100 +38,77 @@ public class Yobo extends CommonCustomMob implements ICustomMob {
 	
 	public void onCreate() {
 	    initLevelAndType();
-
 	    getGoalSelector().a(7, new PathfinderGoalRandomStroll((EntityCreature) entity, 1.0D));
 	    getGoalSelector().a(8, new PathfinderGoalLookAtPlayer((EntityInsentient) entity, EntityHuman.class, 8.0F));
 	    getTargetSelector().a(1, new PathfinderGoalHurtByTarget((EntityCreature) entity, true));
-
 	    this.setName(this.getLevel().getName()+" "+this.getType().getName());
 	}
 	
 	public void onCreateAttributes() {
 		MobComponentDefense defense;
-	    this.setKnockbackResistance(0.99);
-
+	    this.setKnockbackResistance(0.85);
 		switch (this.getLevel()) {
 		case LESSER:
-		    defense = new MobComponentDefense(3.5);
-		    setMaxHealth(20.0);
-		    modifySpeed(1.3);
-		    this.setAttack(8.0);
-		    
-		    this.addDrop("mat_metallic_crystal_fragment_1", 0.05);
-		    
-		    this.addDrop("mat_forged_clay", 0.1);
-		    this.addDrop("mat_crafted_reeds", 0.1);
-		    this.addDrop("mat_crafted_sticks", 0.1);
-		    this.coinDrop(1, 25);
-
+		    defense = new MobComponentDefense(6);
+		    setMaxHealth(12.0);
+		    this.setAttack(4.0);
+		    this.addDrop("civ:refined_sugar", 0.1);
+		    this.addDrop("civ:crafted_sticks", 0.1);
+		    this.addDrop("civ:crafted_string", 0.1);
+			this.addVanillaDrop(ItemManager.getId(Material.IRON_INGOT), (short)0, 0.05);
+		    this.coinDrop(1, 15);
 			break;
+			
 		case GREATER:
-		    defense = new MobComponentDefense(10);
-		    setMaxHealth(25.0);
-		    modifySpeed(1.4);
-		    this.setAttack(13.0);
-		    
-		    this.addDrop("mat_metallic_crystal_fragment_2", 0.05);
-
-		    this.addDrop("mat_clay_steel_cast", 0.05);
-		    this.addDrop("mat_leather_straps", 0.05);
-		    this.addDrop("mat_steel_ingot", 0.05);
-
-		    this.addDrop("mat_varnish", 0.01);
-		    this.addDrop("mat_sticky_resin", 0.01);
-		    this.coinDrop(10, 50);
-
+		    defense = new MobComponentDefense(13);
+		    setMaxHealth(16.0);
+		    this.setAttack(8.5);
+			this.addVanillaDrop(ItemManager.getId(Material.IRON_INGOT), (short)0, 0.1);
+			this.addVanillaDrop(ItemManager.getId(Material.GOLD_INGOT), (short)0, 0.05);
+		    this.addDrop("civ:bronze_ore", 0.05);
+		    this.addDrop("civ:compressed_sugar", 0.1);
+		    this.addDrop("civ:refined_sticks", 0.1);
+		    this.addDrop("civ:refined_string", 0.1);
+		    this.coinDrop(5, 35);
 		    break;
+		    
 		case ELITE:
-		    defense = new MobComponentDefense(16);
-		    setMaxHealth(30.0);
-		    modifySpeed(1.5);
-		    this.setAttack(15.0);
-		    
-		    this.addDrop("mat_metallic_crystal_fragment_3", 0.05);
-
-		    this.addDrop("mat_clay_steel_cast", 0.05);
-		    this.addDrop("mat_reinforced_braid", 0.05);
-		    this.addDrop("mat_carbide_steel_ingot", 0.05);
-
-		    this.addDrop("mat_sticky_resin", 0.1);
-		    this.addDrop("mat_smithy_resin", 0.01);
-		    this.coinDrop(20, 80);
-
+		    defense = new MobComponentDefense(17);
+		    setMaxHealth(20.0);
+		    this.setAttack(13.0);
+			this.addVanillaDrop(ItemManager.getId(Material.GOLD_INGOT), (short)0, 0.1);
+			this.addVanillaDrop(ItemManager.getId(Material.INK_SACK), (short)4, 0.2);
+		    this.addDrop("civ:steel_ore", 0.05);
+		    this.addDrop("civ:compacted_sticks", 0.1);
+		    this.addDrop("civ:wolven_threading", 0.1);
+		    this.coinDrop(15, 50);
 			break;
+			
 		case BRUTAL:
-		    defense = new MobComponentDefense(16);
-		    setMaxHealth(40.0);
-		    modifySpeed(1.5);
-		    this.setAttack(20.0);
-		    
-		    this.addDrop("mat_metallic_crystal_fragment_4", 0.05);
-
-		    this.addDrop("mat_clay_tungsten_casting", 0.05);
-		    this.addDrop("mat_artisan_leather", 0.05);
-		    this.addDrop("mat_tungsten_ingot", 0.05);
-
-		    this.addDrop("mat_sticky_resin", 0.1);
-		    this.addDrop("mat_smithy_resin", 0.01);
-		    this.coinDrop(20, 150);
-
+		    defense = new MobComponentDefense(21);
+		    setMaxHealth(22.0);
+		    this.setAttack(17.5);
+			this.addVanillaDrop(ItemManager.getId(Material.INK_SACK), (short)4, 0.4);
+			this.addVanillaDrop(ItemManager.getId(Material.DIAMOND), (short)0, 0.05);
+		    this.addDrop("civ:titanium_ore", 0.05);
+		    this.addDrop("civ:refined_compacted_sticks", 0.1);
+		    this.addDrop("civ:refined_wolven_threading", 0.1);
+		    this.coinDrop(30, 75);
 			break;
 		default:
 		    defense = new MobComponentDefense(2);
 			break;
 		}
-		
 	    this.addComponent(defense);
 	}
-
+	
 	@Override
 	public String getBaseEntity() {
 		return entityType;
 	}
-
+	
 	@Override
 	public void onDamage(EntityCreature e, DamageSource damagesource, PathfinderGoalSelector goalSelector, PathfinderGoalSelector targetSelector) {
-		
 		if (!(damagesource instanceof EntityDamageSource)) {
 			return;
 		}
@@ -157,12 +137,12 @@ public class Yobo extends CommonCustomMob implements ICustomMob {
 			}
 		}
 	}
-
+	
 	@Override
 	public String getClassName() {
 		return Yobo.class.getName();
 	}
-
+	
 	public static void register() {
 		    setValidBiome(CustomMobType.YOBO, CustomMobLevel.LESSER, Biome.PLAINS);
 		    setValidBiome(CustomMobType.YOBO, CustomMobLevel.LESSER, Biome.FOREST);
@@ -175,18 +155,16 @@ public class Yobo extends CommonCustomMob implements ICustomMob {
 		    setValidBiome(CustomMobType.YOBO, CustomMobLevel.GREATER, Biome.BIRCH_FOREST_MOUNTAINS);
 		    setValidBiome(CustomMobType.YOBO, CustomMobLevel.GREATER, Biome.FOREST_HILLS);
 
-		
 		    setValidBiome(CustomMobType.YOBO, CustomMobLevel.ELITE, Biome.EXTREME_HILLS);
 		    setValidBiome(CustomMobType.YOBO, CustomMobLevel.ELITE, Biome.EXTREME_HILLS_PLUS);
 		    setValidBiome(CustomMobType.YOBO, CustomMobLevel.ELITE, Biome.ROOFED_FOREST);
 		    setValidBiome(CustomMobType.YOBO, CustomMobLevel.ELITE, Biome.ROOFED_FOREST_MOUNTAINS);
-
 	
 		    setValidBiome(CustomMobType.YOBO, CustomMobLevel.BRUTAL, Biome.MEGA_SPRUCE_TAIGA_HILLS);
 		    setValidBiome(CustomMobType.YOBO, CustomMobLevel.BRUTAL, Biome.EXTREME_HILLS_MOUNTAINS);
 		    setValidBiome(CustomMobType.YOBO, CustomMobLevel.BRUTAL, Biome.EXTREME_HILLS_PLUS_MOUNTAINS);
 	}
-
+	
 	@Override
 	public void onTarget(EntityTargetEvent event) {
 		super.onTarget(event);
@@ -197,9 +175,6 @@ public class Yobo extends CommonCustomMob implements ICustomMob {
 			for (Entity e : minions) {
 				e.getBukkitEntity().remove();
 			}
-			
 		}
-		
 	}
-
 }

@@ -1,33 +1,15 @@
-/*************************************************************************
- * 
- * AVRGAMING LLC
- * __________________
- * 
- *  [2013] AVRGAMING LLC
- *  All Rights Reserved.
- * 
- * NOTICE:  All information contained herein is, and remains
- * the property of AVRGAMING LLC and its suppliers,
- * if any.  The intellectual and technical concepts contained
- * herein are proprietary to AVRGAMING LLC
- * and its suppliers and may be covered by U.S. and Foreign Patents,
- * patents in process, and are protected by trade secret or copyright law.
- * Dissemination of this information or reproduction of this material
- * is strictly forbidden unless prior written permission is obtained
- * from AVRGAMING LLC.
- */
-package com.avrgaming.civcraft.command.civ;
+package com.civcraft.command.civ;
 
 import org.bukkit.entity.Player;
 
-import com.avrgaming.civcraft.command.CommandBase;
-import com.avrgaming.civcraft.exception.CivException;
-import com.avrgaming.civcraft.main.CivGlobal;
-import com.avrgaming.civcraft.main.CivMessage;
-import com.avrgaming.civcraft.object.Civilization;
-import com.avrgaming.civcraft.object.Resident;
-import com.avrgaming.civcraft.permission.PermissionGroup;
-import com.avrgaming.civcraft.util.CivColor;
+import com.civcraft.command.CommandBase;
+import com.civcraft.exception.CivException;
+import com.civcraft.main.CivGlobal;
+import com.civcraft.main.CivMessage;
+import com.civcraft.object.Civilization;
+import com.civcraft.object.Resident;
+import com.civcraft.permission.PermissionGroup;
+import com.civcraft.util.CivColor;
 
 public class CivGroupCommand extends CommandBase {
 
@@ -36,9 +18,9 @@ public class CivGroupCommand extends CommandBase {
 		command = "/civ group";
 		displayName = "Civ Group";
 		
-		commands.put("add", "[name] [leaders|advisers] - Adds a member to the leader or adviser group.");
-		commands.put("remove", "[name] [leaders|advisers] - Removes a member to the leader or adviser group.");
-		commands.put("info", "[leaders|advisers] - Lists members of the leader or adviser group.");
+		commands.put("add", "[name] [leaders|dipadvisers|econadvisers] - Adds a member to the leader or an adviser group.");
+		commands.put("remove", "[name] [leaders|dipadvisers|econadvisers] - Removes a member to the leader or an adviser group.");
+		commands.put("info", "[leaders|dipadvisers|econadvisers] - Lists members of the leader or an adviser group.");
 		
 	}
 
@@ -51,8 +33,10 @@ public class CivGroupCommand extends CommandBase {
 		PermissionGroup grp = null;
 		if (groupName.equalsIgnoreCase("leaders")) {
 			grp = civ.getLeaderGroup();
-		} else if (groupName.equalsIgnoreCase("advisers")) {
-			grp = civ.getAdviserGroup();
+		} else if (groupName.equalsIgnoreCase("dipadvisers")) {
+			grp = civ.getDipAdviserGroup();
+		} else if (groupName.equalsIgnoreCase("econadvisers")) {
+			grp = civ.getEconAdviserGroup();
 		} else {
 			throw new CivException("Could not find group "+groupName);
 		}
@@ -89,8 +73,10 @@ public class CivGroupCommand extends CommandBase {
 		PermissionGroup grp = null;
 		if (groupName.equalsIgnoreCase("leaders")) {
 			grp = civ.getLeaderGroup();
-		} else if (groupName.equalsIgnoreCase("advisers")) {
-			grp = civ.getAdviserGroup();
+		} else if (groupName.equalsIgnoreCase("dipadvisers")) {
+			grp = civ.getDipAdviserGroup();
+		} else if (groupName.equalsIgnoreCase("econadvisers")) {
+			grp = civ.getEconAdviserGroup();
 		} else {
 			throw new CivException("Could not find group "+groupName);
 		}
@@ -124,8 +110,10 @@ public class CivGroupCommand extends CommandBase {
 			PermissionGroup grp = null;
 			if (args[1].equalsIgnoreCase("leaders")) {
 				grp = civ.getLeaderGroup();
-			} else if (args[1].equalsIgnoreCase("advisers")) {
-				grp = civ.getAdviserGroup();
+			} else if (args[1].equalsIgnoreCase("dipadvisers")) {
+				grp = civ.getDipAdviserGroup();
+			} else if (args[1].equalsIgnoreCase("econadvisers")) {
+				grp = civ.getEconAdviserGroup();
 			} else {
 				throw new CivException("Could not find group "+args[1]);
 			}
@@ -140,13 +128,12 @@ public class CivGroupCommand extends CommandBase {
 			
 		} else {
 			CivMessage.sendHeading(sender, "Civ Group Information");
-
 			PermissionGroup grp = civ.getLeaderGroup();
+			CivMessage.send(sender, grp.getName()+CivColor.LightGray+" ("+grp.getMemberCount()+" members)");	
+			grp = civ.getDipAdviserGroup();
 			CivMessage.send(sender, grp.getName()+CivColor.LightGray+" ("+grp.getMemberCount()+" members)");
-					
-			grp = civ.getAdviserGroup();
+			grp = civ.getEconAdviserGroup();
 			CivMessage.send(sender, grp.getName()+CivColor.LightGray+" ("+grp.getMemberCount()+" members)");
-
 		}
 	}
 	
@@ -154,15 +141,14 @@ public class CivGroupCommand extends CommandBase {
 	public void doDefaultAction() throws CivException {
 		showHelp();
 	}
-
+	
 	@Override
 	public void showHelp() {
 		showBasicHelp();
 	}
-
+	
 	@Override
 	public void permissionCheck() throws CivException {
-		this.validLeaderAdvisor();
+		this.validLeaderDipEconAdvisor();
 	}
-
 }

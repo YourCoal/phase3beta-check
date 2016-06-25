@@ -1,4 +1,4 @@
-package com.avrgaming.civcraft.config;
+package com.civcraft.config;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -8,10 +8,10 @@ import java.util.Map;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
-import com.avrgaming.civcraft.main.CivGlobal;
-import com.avrgaming.civcraft.main.CivLog;
-import com.avrgaming.civcraft.object.Resident;
-import com.avrgaming.civcraft.util.CivColor;
+import com.civcraft.main.CivGlobal;
+import com.civcraft.main.CivLog;
+import com.civcraft.object.Resident;
+import com.civcraft.util.CivColor;
 
 public class ConfigMaterial {
 
@@ -34,6 +34,9 @@ public class ConfigMaterial {
 	public List<HashMap<String, String>> components = new LinkedList<HashMap<String, String>>();
 	public boolean vanilla = false;
 	public int amount = 1;
+	public boolean shiny = false;
+	public boolean tradeableShipyard = false;
+	public double tradeShipyardValue = 0;
 	
 	@SuppressWarnings("unchecked")
 	public static void loadConfig(FileConfiguration cfg, Map<String, ConfigMaterial> materials){
@@ -90,6 +93,21 @@ public class ConfigMaterial {
 			Boolean shaped = (Boolean)b.get("shaped");
 			if (shaped != null) {
 				mat.shaped = shaped;
+			}
+			
+			Boolean isShiny = (Boolean)b.get("shiny");
+			if (isShiny != null) {
+				mat.shiny = isShiny;
+			}
+			
+			Boolean isTradeableShipyard = (Boolean)b.get("tradeableShipyard");
+			if (isTradeableShipyard != null) {
+				mat.tradeableShipyard = isTradeableShipyard;
+			}
+			
+			Double tradeShipyardValue = (Double)b.get("tradeShipyardValue");
+			if (tradeShipyardValue != null) {
+				mat.tradeShipyardValue = tradeShipyardValue;
 			}
 			
 			Boolean vanilla = (Boolean)b.get("vanilla");

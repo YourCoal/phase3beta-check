@@ -1,22 +1,4 @@
-/*************************************************************************
- * 
- * AVRGAMING LLC
- * __________________
- * 
- *  [2013] AVRGAMING LLC
- *  All Rights Reserved.
- * 
- * NOTICE:  All information contained herein is, and remains
- * the property of AVRGAMING LLC and its suppliers,
- * if any.  The intellectual and technical concepts contained
- * herein are proprietary to AVRGAMING LLC
- * and its suppliers and may be covered by U.S. and Foreign Patents,
- * patents in process, and are protected by trade secret or copyright law.
- * Dissemination of this information or reproduction of this material
- * is strictly forbidden unless prior written permission is obtained
- * from AVRGAMING LLC.
- */
-package com.avrgaming.civcraft.command.admin;
+package com.civcraft.command.admin;
 
 import java.sql.SQLException;
 import java.util.LinkedList;
@@ -26,26 +8,26 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import com.avrgaming.civcraft.command.CommandBase;
-import com.avrgaming.civcraft.command.ReportChestsTask;
-import com.avrgaming.civcraft.command.town.TownInfoCommand;
-import com.avrgaming.civcraft.config.CivSettings;
-import com.avrgaming.civcraft.exception.AlreadyRegisteredException;
-import com.avrgaming.civcraft.exception.CivException;
-import com.avrgaming.civcraft.exception.InvalidNameException;
-import com.avrgaming.civcraft.main.CivGlobal;
-import com.avrgaming.civcraft.main.CivMessage;
-import com.avrgaming.civcraft.object.Civilization;
-import com.avrgaming.civcraft.object.Resident;
-import com.avrgaming.civcraft.object.Town;
-import com.avrgaming.civcraft.object.TownChunk;
-import com.avrgaming.civcraft.permission.PermissionGroup;
-import com.avrgaming.civcraft.randomevents.ConfigRandomEvent;
-import com.avrgaming.civcraft.randomevents.RandomEvent;
-import com.avrgaming.civcraft.structure.TownHall;
-import com.avrgaming.civcraft.threading.TaskMaster;
-import com.avrgaming.civcraft.util.BlockCoord;
-import com.avrgaming.civcraft.util.ChunkCoord;
+import com.civcraft.command.CommandBase;
+import com.civcraft.command.ReportChestsTask;
+import com.civcraft.command.town.TownInfoCommand;
+import com.civcraft.config.CivSettings;
+import com.civcraft.exception.AlreadyRegisteredException;
+import com.civcraft.exception.CivException;
+import com.civcraft.exception.InvalidNameException;
+import com.civcraft.main.CivGlobal;
+import com.civcraft.main.CivMessage;
+import com.civcraft.object.Civilization;
+import com.civcraft.object.Resident;
+import com.civcraft.object.Town;
+import com.civcraft.object.TownChunk;
+import com.civcraft.permission.PermissionGroup;
+import com.civcraft.randomevents.ConfigRandomEvent;
+import com.civcraft.randomevents.RandomEvent;
+import com.civcraft.structure.TownHall;
+import com.civcraft.threading.TaskMaster;
+import com.civcraft.util.BlockCoord;
+import com.civcraft.util.ChunkCoord;
 
 public class AdminTownCommand extends CommandBase {
 
@@ -53,11 +35,13 @@ public class AdminTownCommand extends CommandBase {
 	public void init() {
 		command = "/ad town";
 		displayName = "Admin town";
-		
-		commands.put("disband", "[town] - disbands this town");
 		commands.put("claim", "[town] - forcibly claims the plot you stand on for this named town.");
 		commands.put("unclaim", "forcibly unclaims the plot you stand on.");
+		
 		commands.put("hammerrate", "[town] [amount] set this town's hammer rate to this amount.");
+		commands.put("beakerrate", "[town] [amount] set this town's beaker rate to this amount.");
+		commands.put("growthrate", "[town] [amount] set this town's growth rate to this amount.");
+		
 		commands.put("addmayor", "[town] [player] - adds the player as a mayor of this town.");
 		commands.put("addassistant", "[town] [player] - adds this player as an assistant to this town.");
 		commands.put("rmmayor", "[town] [player] - remove this player as a mayor from this town.");
@@ -78,14 +62,51 @@ public class AdminTownCommand extends CommandBase {
 		commands.put("rename", "[town] [new_name] - Renames this town.");
 	}
 	
+	public void hammerrate_cmd() throws CivException {
+		Town town = getNamedTown(1);
+		if (args.length < 3) {
+			throw new CivException("Enter a town name and amount");
+		} try {
+			town.setHammerRate(Double.valueOf(args[2]));
+			CivMessage.sendSuccess(sender, "Set "+args[1]+"'s hammer rate to "+args[2]);
+		} catch (NumberFormatException e) {
+			throw new CivException(args[2]+" is not a number.");
+		}
+		town.save();
+	}
+	
+	public void beakerrate_cmd() throws CivException {
+		Town town = getNamedTown(1);
+		if (args.length < 3) {
+			throw new CivException("Enter a town name and amount");
+		} try {
+			town.setBeakerRate(Double.valueOf(args[2]));
+			CivMessage.sendSuccess(sender, "Set "+args[1]+"'s beaker rate to "+args[2]);
+		} catch (NumberFormatException e) {
+			throw new CivException(args[2]+" is not a number.");
+		}
+		town.save();
+	}
+	
+	public void growthrate_cmd() throws CivException {
+		Town town = getNamedTown(1);
+		if (args.length < 3) {
+			throw new CivException("Enter a town name and amount");
+		} try {
+			town.setGrowthRate(Double.valueOf(args[2]));
+			CivMessage.sendSuccess(sender, "Set "+args[1]+"'s growth rate to "+args[2]);
+		} catch (NumberFormatException e) {
+			throw new CivException(args[2]+" is not a number.");
+		}
+		town.save();
+	}
+	
 	public void rename_cmd() throws CivException, InvalidNameException {
 		Town town = getNamedTown(1);
 		String name = getNamedString(2, "Name for new town.");
-		
 		if (args.length < 3) {
 			throw new CivException("Use underscores for names with spaces.");
 		}
-		
 		town.rename(name);
 		CivMessage.sendSuccess(sender, "Renamed town.");
 	}
@@ -396,40 +417,6 @@ public class AdminTownCommand extends CommandBase {
 		
 		CivMessage.sendSuccess(sender, "Added "+resident.getName()+" to mayors group in "+town.getName());
 		
-	}
-	
-	public void disband_cmd() throws CivException {
-		Town town = getNamedTown(1);
-		
-		if (town.isCapitol()) {
-			throw new CivException("Cannot disband the capitol town, disband the civilization instead.");
-		}
-		
-		CivMessage.sendTown(town, "Your town is has disbanded by an admin!");
-		try {
-			town.delete();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		
-		CivMessage.sendSuccess(sender, "Town disbanded");
-	}
-	
-	public void hammerrate_cmd() throws CivException {
-		if (args.length < 3) {
-			throw new CivException("Enter a town name and amount");
-		}
-		
-		Town town = getNamedTown(1);
-		
-		try {
-			town.setHammerRate(Double.valueOf(args[2]));
-			CivMessage.sendSuccess(sender, "Set "+args[1]+" hammer rate to "+args[2]);
-		} catch (NumberFormatException e) {
-			throw new CivException(args[2]+" is not a number.");
-		}
-		
-		town.save();
 	}
 	
 	public void unclaim_cmd() throws CivException {

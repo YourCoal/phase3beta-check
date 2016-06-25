@@ -1,4 +1,4 @@
-package com.avrgaming.civcraft.items.components;
+package com.civcraft.items.components;
 
 import gpl.AttributeUtil;
 
@@ -7,13 +7,13 @@ import java.util.Random;
 import org.bukkit.ChatColor;
 import org.bukkit.inventory.ItemStack;
 
-import com.avrgaming.civcraft.config.CivSettings;
-import com.avrgaming.civcraft.exception.InvalidConfiguration;
-import com.avrgaming.civcraft.loreenhancements.LoreEnhancement;
-import com.avrgaming.civcraft.lorestorage.LoreCraftableMaterial;
-import com.avrgaming.civcraft.lorestorage.LoreMaterial;
-import com.avrgaming.civcraft.main.CivLog;
-import com.avrgaming.civcraft.util.CivColor;
+import com.civcraft.config.CivSettings;
+import com.civcraft.exception.InvalidConfiguration;
+import com.civcraft.loreenhancements.LoreEnhancement;
+import com.civcraft.lorestorage.LoreCraftableMaterial;
+import com.civcraft.lorestorage.LoreMaterial;
+import com.civcraft.main.CivLog;
+import com.civcraft.util.CivColor;
 
 public class Catalyst extends ItemComponent {
 

@@ -1,24 +1,23 @@
-package com.avrgaming.civcraft.command.admin;
+package com.civcraft.command.admin;
 
 import java.util.HashMap;
 
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import com.avrgaming.civcraft.command.CommandBase;
-import com.avrgaming.civcraft.exception.CivException;
-import com.avrgaming.civcraft.loreenhancements.LoreEnhancement;
-import com.avrgaming.civcraft.loreenhancements.LoreEnhancementArenaItem;
-import com.avrgaming.civcraft.loreenhancements.LoreEnhancementAttack;
-import com.avrgaming.civcraft.loreenhancements.LoreEnhancementDefense;
-import com.avrgaming.civcraft.loreenhancements.LoreEnhancementSoulBound;
-import com.avrgaming.civcraft.lorestorage.LoreCraftableMaterial;
-import com.avrgaming.civcraft.lorestorage.LoreMaterial;
-import com.avrgaming.civcraft.main.CivData;
-import com.avrgaming.civcraft.main.CivGlobal;
-import com.avrgaming.civcraft.main.CivMessage;
-import com.avrgaming.civcraft.object.Resident;
-import com.avrgaming.civcraft.util.ItemManager;
+import com.civcraft.command.CommandBase;
+import com.civcraft.exception.CivException;
+import com.civcraft.loreenhancements.LoreEnhancement;
+import com.civcraft.loreenhancements.LoreEnhancementAttack;
+import com.civcraft.loreenhancements.LoreEnhancementDefense;
+import com.civcraft.loreenhancements.LoreEnhancementSoulBound;
+import com.civcraft.lorestorage.LoreCraftableMaterial;
+import com.civcraft.lorestorage.LoreMaterial;
+import com.civcraft.main.CivData;
+import com.civcraft.main.CivGlobal;
+import com.civcraft.main.CivMessage;
+import com.civcraft.object.Resident;
+import com.civcraft.util.ItemManager;
 
 public class AdminItemCommand extends CommandBase {
 
@@ -62,7 +61,6 @@ public class AdminItemCommand extends CommandBase {
 		enhancements.put("soulbound", new LoreEnhancementSoulBound());
 		enhancements.put("attack", new LoreEnhancementAttack());
 		enhancements.put("defence", new LoreEnhancementDefense());
-		enhancements.put("arena", new LoreEnhancementArenaItem());
 
 		if (inHand == null || ItemManager.getId(inHand) == CivData.AIR) {
 			throw new CivException("You must have an item in your hand to enhance it.");

@@ -16,11 +16,11 @@
  * is strictly forbidden unless prior written permission is obtained
  * from AVRGAMING LLC.
  */
-package com.avrgaming.civcraft.event;
+package com.civcraft.event;
 
 import java.util.Calendar;
 
-import com.avrgaming.civcraft.exception.InvalidConfiguration;
+import com.civcraft.exception.InvalidConfiguration;
 
 public interface EventInterface {
 	void process();

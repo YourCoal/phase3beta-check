@@ -16,22 +16,22 @@
  * is strictly forbidden unless prior written permission is obtained
  * from AVRGAMING LLC.
  */
-package com.avrgaming.civcraft.threading.tasks;
+package com.civcraft.threading.tasks;
 
 import gpl.AttributeUtil;
-import net.minecraft.server.v1_7_R4.Material;
+import net.minecraft.server.v1_8_R3.Material;
 
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-import com.avrgaming.civcraft.exception.CivException;
-import com.avrgaming.civcraft.loreenhancements.LoreEnhancement;
-import com.avrgaming.civcraft.lorestorage.LoreMaterial;
-import com.avrgaming.civcraft.main.CivGlobal;
-import com.avrgaming.civcraft.main.CivMessage;
-import com.avrgaming.civcraft.object.BuildableDamageBlock;
-import com.avrgaming.civcraft.util.BlockCoord;
-import com.avrgaming.civcraft.util.CivColor;
+import com.civcraft.exception.CivException;
+import com.civcraft.loreenhancements.LoreEnhancement;
+import com.civcraft.lorestorage.LoreMaterial;
+import com.civcraft.main.CivGlobal;
+import com.civcraft.main.CivMessage;
+import com.civcraft.object.BuildableDamageBlock;
+import com.civcraft.util.BlockCoord;
+import com.civcraft.util.CivColor;
 
 public class StructureBlockHitEvent implements Runnable {
 
@@ -81,7 +81,7 @@ public class StructureBlockHitEvent implements Runnable {
 			}
 			
 			if (damage > 1) {
-				CivMessage.send(player, CivColor.LightGray+"Punchout does "+(damage-1)+" extra damage!");
+				CivMessage.send(player, CivColor.LightGray+"Punchout Lore: "+(damage-1)+" extra damage!");
 			}
 				
 			dmgBlock.getOwner().onDamage(damage, world, player, dmgBlock.getCoord(), dmgBlock);

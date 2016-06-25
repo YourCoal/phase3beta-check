@@ -1,14 +1,14 @@
-package com.avrgaming.civcraft.interactive;
+package com.civcraft.interactive;
 
 import org.bukkit.entity.Player;
 
-import com.avrgaming.civcraft.exception.CivException;
-import com.avrgaming.civcraft.lorestorage.LoreCraftableMaterial;
-import com.avrgaming.civcraft.main.CivGlobal;
-import com.avrgaming.civcraft.main.CivMessage;
-import com.avrgaming.civcraft.object.Resident;
-import com.avrgaming.civcraft.structure.Barracks;
-import com.avrgaming.civcraft.util.CivColor;
+import com.civcraft.exception.CivException;
+import com.civcraft.lorestorage.LoreCraftableMaterial;
+import com.civcraft.main.CivGlobal;
+import com.civcraft.main.CivMessage;
+import com.civcraft.object.Resident;
+import com.civcraft.structure.Barracks;
+import com.civcraft.util.CivColor;
 
 public class InteractiveRepairItem implements InteractiveResponse {
 

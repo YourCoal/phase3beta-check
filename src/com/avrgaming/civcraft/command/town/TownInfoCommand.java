@@ -1,22 +1,4 @@
-/*************************************************************************
- * 
- * AVRGAMING LLC
- * __________________
- * 
- *  [2013] AVRGAMING LLC
- *  All Rights Reserved.
- * 
- * NOTICE:  All information contained herein is, and remains
- * the property of AVRGAMING LLC and its suppliers,
- * if any.  The intellectual and technical concepts contained
- * herein are proprietary to AVRGAMING LLC
- * and its suppliers and may be covered by U.S. and Foreign Patents,
- * patents in process, and are protected by trade secret or copyright law.
- * Dissemination of this information or reproduction of this material
- * is strictly forbidden unless prior written permission is obtained
- * from AVRGAMING LLC.
- */
-package com.avrgaming.civcraft.command.town;
+package com.civcraft.command.town;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -26,33 +8,32 @@ import java.util.LinkedList;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.avrgaming.civcraft.command.CommandBase;
-import com.avrgaming.civcraft.config.CivSettings;
-import com.avrgaming.civcraft.config.ConfigCultureLevel;
-import com.avrgaming.civcraft.config.ConfigHappinessState;
-import com.avrgaming.civcraft.config.ConfigTownLevel;
-import com.avrgaming.civcraft.exception.CivException;
-import com.avrgaming.civcraft.exception.InvalidConfiguration;
-import com.avrgaming.civcraft.items.BonusGoodie;
-import com.avrgaming.civcraft.main.CivGlobal;
-import com.avrgaming.civcraft.main.CivMessage;
-import com.avrgaming.civcraft.object.AttrSource;
-import com.avrgaming.civcraft.object.Buff;
-import com.avrgaming.civcraft.object.Civilization;
-import com.avrgaming.civcraft.object.CultureChunk;
-import com.avrgaming.civcraft.object.Relation;
-import com.avrgaming.civcraft.object.Relation.Status;
-import com.avrgaming.civcraft.object.Resident;
-import com.avrgaming.civcraft.object.Town;
-import com.avrgaming.civcraft.object.TradeGood;
-import com.avrgaming.civcraft.structure.Bank;
-import com.avrgaming.civcraft.structure.Buildable;
-import com.avrgaming.civcraft.structure.Cottage;
-import com.avrgaming.civcraft.structure.Mine;
-import com.avrgaming.civcraft.structure.Structure;
-import com.avrgaming.civcraft.structure.TownHall;
-import com.avrgaming.civcraft.structure.wonders.Wonder;
-import com.avrgaming.civcraft.util.CivColor;
+import com.civcraft.command.CommandBase;
+import com.civcraft.config.CivSettings;
+import com.civcraft.config.ConfigCultureLevel;
+import com.civcraft.config.ConfigHappinessState;
+import com.civcraft.config.ConfigTownLevel;
+import com.civcraft.exception.CivException;
+import com.civcraft.exception.InvalidConfiguration;
+import com.civcraft.items.BonusGoodie;
+import com.civcraft.main.CivGlobal;
+import com.civcraft.main.CivMessage;
+import com.civcraft.object.AttrSource;
+import com.civcraft.object.Buff;
+import com.civcraft.object.Civilization;
+import com.civcraft.object.CultureChunk;
+import com.civcraft.object.Resident;
+import com.civcraft.object.Town;
+import com.civcraft.object.TradeGood;
+import com.civcraft.structure.Bank;
+import com.civcraft.structure.Buildable;
+import com.civcraft.structure.Cottage;
+import com.civcraft.structure.Lab;
+import com.civcraft.structure.Mine;
+import com.civcraft.structure.Structure;
+import com.civcraft.structure.TownHall;
+import com.civcraft.structure.wonders.Wonder;
+import com.civcraft.util.CivColor;
 
 public class TownInfoCommand extends CommandBase {
 
@@ -63,10 +44,12 @@ public class TownInfoCommand extends CommandBase {
 		
 		commands.put("upkeep", "Shows town upkeep information.");
 		commands.put("cottage", "Shows cottage information for town.");
+		commands.put("temple", "Shows temple information for town.");
 		commands.put("structures", "Shows upkeep information related to structures.");
 		commands.put("culture", "Shows culture information for town.");
 		commands.put("trade", "Shows town trade good information.");
 		commands.put("mine", "Shows mine production information.");
+		commands.put("lab", "Shows mine production information.");
 		commands.put("hammers", "Shows town hammer information.");
 		commands.put("goodies", "Shows which goodies are being used by the town.");
 		commands.put("rates", "Shows the culture,growth,trade and cottage rates of this town.");
@@ -403,10 +386,10 @@ public class TownInfoCommand extends CommandBase {
 			}
 						
 			double coins = cottage.getCoinsGenerated();
-			if (town.getCiv().hasTechnology("tech_taxation")) {
+			if (town.getCiv().hasTechnology("tech:atom_developing")) {
 				double taxation_bonus;
 				try {
-					taxation_bonus = CivSettings.getDouble(CivSettings.techsConfig, "taxation_cottage_buff");
+					taxation_bonus = CivSettings.getDouble(CivSettings.techsConfig, "atom_developing_cottage_buff");
 					coins *= taxation_bonus;
 				} catch (InvalidConfiguration e) {
 					e.printStackTrace();
@@ -432,15 +415,12 @@ public class TownInfoCommand extends CommandBase {
 		out.add(CivColor.Green+"Cottage Rate: "+CivColor.Yellow+df.format(town.getCottageRate()*100)+"%");
 		total *= town.getCottageRate();
 		out.add(CivColor.Green+"Total: "+CivColor.Yellow+df.format(total)+" coins.");
-		
 		CivMessage.send(sender, out);
 	}
-	
 	
 	public void mine_cmd() throws CivException {
 		Town town = getSelectedTown();
 		ArrayList<String> out = new ArrayList<String>();	
-		
 		CivMessage.sendHeading(sender, town.getName()+" Mine Info");
 		double total = 0;
 		
@@ -450,27 +430,55 @@ public class TownInfoCommand extends CommandBase {
 			}
 			
 			Mine mine = (Mine)struct;
-			
 			String color;
 			if (struct.isActive()) {
 				color = CivColor.LightGreen;
 			} else {
 				color = CivColor.Rose;
 			}
-									
+			
 			out.add(color+"Mine ("+struct.getCorner()+")");
 			out.add(CivColor.Green+"    level: "+CivColor.Yellow+mine.getLevel()+
 					CivColor.Green+" count: "+CivColor.Yellow+"("+mine.getCount()+"/"+mine.getMaxCount()+")");
 			out.add(CivColor.Green+"    hammers per tile: "+CivColor.Yellow+mine.getHammersPerTile()+
 					CivColor.Green+" Last Result: "+CivColor.Yellow+mine.getLastResult().name());
-			
 			total += mine.getHammersPerTile()*9; //XXX estimate based on tile radius of 1.
-			
 		}
 		out.add(CivColor.Green+"----------------------------");
 		out.add(CivColor.Green+"Sub Total: "+CivColor.Yellow+total);
 		out.add(CivColor.Green+"Total: "+CivColor.Yellow+df.format(total)+" hammers (estimate).");
-		
+		CivMessage.send(sender, out);
+	}
+	
+	public void lab_cmd() throws CivException {
+		Town town = getSelectedTown();
+		ArrayList<String> out = new ArrayList<String>();	
+		CivMessage.sendHeading(sender, town.getName()+" Lab Info");
+		double total = 0;
+		for (Structure struct : town.getStructures()) {
+			if (!struct.getConfigId().equals("ti_lab")) {
+				continue;
+			}
+			
+			Lab lab = (Lab)struct;
+			String color;
+			if (struct.isActive()) {
+				color = CivColor.LightGreen;
+			} else {
+				color = CivColor.Rose;
+			}
+			
+			out.add(color+"Lab ("+struct.getCorner()+")");
+			out.add(CivColor.Green+"    level: "+CivColor.Yellow+lab.getLevel()+
+					CivColor.Green+" count: "+CivColor.Yellow+"("+lab.getCount()+"/"+lab.getMaxCount()+")");
+			out.add(CivColor.Green+"    beakers per tile: "+CivColor.Yellow+lab.getBeakersPerTile()+
+					CivColor.Green+" Last Result: "+CivColor.Yellow+lab.getLastResult().name());
+			total += lab.getBeakersPerTile()*9; //XXX estimate based on tile radius of 1.
+			
+		}
+		out.add(CivColor.Green+"----------------------------");
+		out.add(CivColor.Green+"Sub Total: "+CivColor.Yellow+total);
+		out.add(CivColor.Green+"Total: "+CivColor.Yellow+df.format(total)+" beakers (estimate).");
 		CivMessage.send(sender, out);
 	}
 	
@@ -585,7 +593,7 @@ public class TownInfoCommand extends CommandBase {
 		}
 		
 		if (resident == null || town.isInGroup("mayors", resident) || town.isInGroup("assistants", resident) || 
-				civ.getLeaderGroup().hasMember(resident) || civ.getAdviserGroup().hasMember(resident) || isAdmin) {
+				civ.getLeaderGroup().hasMember(resident) || civ.getEconAdviserGroup().hasMember(resident) || isAdmin) {
 			try {
 				CivMessage.send(sender, CivColor.Green+"Treasury: "+CivColor.LightGreen+town.getBalance()+CivColor.Green+" coins. Upkeep: "+CivColor.LightGreen+town.getTotalUpkeep()*town.getGovernment().upkeep_rate);
 				Structure bank = town.getStructureByType("s_bank");
@@ -622,21 +630,8 @@ public class TownInfoCommand extends CommandBase {
 			} else {
 				CivMessage.send(sender, CivColor.LightPurple+"Location:"+townhall.getCorner());
 			}
-			
-			String wars = "";
-			for (Relation relation : town.getCiv().getDiplomacyManager().getRelations()) {
-				if (relation.getStatus() == Status.WAR) {
-					wars += relation.getOtherCiv().getName()+", ";
-				}
-			}
-			
-			CivMessage.send(sender, CivColor.LightPurple+"Wars: "+wars);
-			
 		}
-		
 	}
-	
-	
 	
 	private void show_info() throws CivException {
 		Civilization civ = getSenderCiv();	

@@ -1,14 +1,14 @@
-package com.avrgaming.civcraft.interactive;
+package com.civcraft.interactive;
 
 import org.bukkit.entity.Player;
 
-import com.avrgaming.civcraft.exception.CivException;
-import com.avrgaming.civcraft.main.CivGlobal;
-import com.avrgaming.civcraft.main.CivMessage;
-import com.avrgaming.civcraft.object.Resident;
-import com.avrgaming.civcraft.util.CivColor;
-import com.avrgaming.civcraft.util.TimeTools;
-import com.avrgaming.global.perks.components.ChangeWeather;
+import com.civcraft.exception.CivException;
+import com.civcraft.main.CivGlobal;
+import com.civcraft.main.CivMessage;
+import com.civcraft.object.Resident;
+import com.civcraft.util.CivColor;
+import com.civcraft.util.TimeTools;
+import com.global.perks.components.ChangeWeather;
 
 public class InteractiveConfirmWeatherChange implements InteractiveResponse {
 

@@ -1,7 +1,7 @@
-package com.avrgaming.civcraft.mobs;
+package com.civcraft.mobs;
 
-import com.avrgaming.civcraft.mobs.MobSpawner.CustomMobLevel;
-import com.avrgaming.civcraft.mobs.MobSpawner.CustomMobType;
+import com.civcraft.mobs.MobSpawner.CustomMobLevel;
+import com.civcraft.mobs.MobSpawner.CustomMobType;
 
 public class TypeLevel {
 	public CustomMobType type;

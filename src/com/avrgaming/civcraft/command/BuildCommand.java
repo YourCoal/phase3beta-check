@@ -1,51 +1,32 @@
-/*************************************************************************
- * 
- * AVRGAMING LLC
- * __________________
- * 
- *  [2013] AVRGAMING LLC
- *  All Rights Reserved.
- * 
- * NOTICE:  All information contained herein is, and remains
- * the property of AVRGAMING LLC and its suppliers,
- * if any.  The intellectual and technical concepts contained
- * herein are proprietary to AVRGAMING LLC
- * and its suppliers and may be covered by U.S. and Foreign Patents,
- * patents in process, and are protected by trade secret or copyright law.
- * Dissemination of this information or reproduction of this material
- * is strictly forbidden unless prior written permission is obtained
- * from AVRGAMING LLC.
- */
-package com.avrgaming.civcraft.command;
+package com.civcraft.command;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
 
 import org.bukkit.entity.Player;
 
-import com.avrgaming.civcraft.config.CivSettings;
-import com.avrgaming.civcraft.config.ConfigBuildableInfo;
-import com.avrgaming.civcraft.exception.CivException;
-import com.avrgaming.civcraft.main.CivGlobal;
-import com.avrgaming.civcraft.main.CivMessage;
-import com.avrgaming.civcraft.object.Resident;
-import com.avrgaming.civcraft.object.Town;
-import com.avrgaming.civcraft.structure.Buildable;
-import com.avrgaming.civcraft.structure.Structure;
-import com.avrgaming.civcraft.structure.wonders.Wonder;
-import com.avrgaming.civcraft.threading.tasks.BuildAsyncTask;
-import com.avrgaming.civcraft.util.BlockCoord;
-import com.avrgaming.civcraft.util.CivColor;
-import com.avrgaming.civcraft.war.War;
+import com.civcraft.config.CivSettings;
+import com.civcraft.config.ConfigBuildableInfo;
+import com.civcraft.exception.CivException;
+import com.civcraft.main.CivGlobal;
+import com.civcraft.main.CivMessage;
+import com.civcraft.object.Resident;
+import com.civcraft.object.Town;
+import com.civcraft.structure.Buildable;
+import com.civcraft.structure.Structure;
+import com.civcraft.structure.wonders.Wonder;
+import com.civcraft.threading.tasks.BuildAsyncTask;
+import com.civcraft.util.BlockCoord;
+import com.civcraft.util.CivColor;
+import com.civcraft.war.War;
 
 public class BuildCommand extends CommandBase {
-
+	
 	@Override
 	public void init() {
 		command = "/build";
 		displayName = "Build";
 		sendUnknownToDefault = true;
-		
 		commands.put("list", "shows all available structures.");
 		commands.put("progress", "Shows progress of currently building structures.");
 		commands.put("repairnearest", "Repairs destroyed structures.");
@@ -54,14 +35,12 @@ public class BuildCommand extends CommandBase {
 		commands.put("demolishnearest", "- destroys the nearest structure. Requires confirmation.");
 		commands.put("refreshnearest", "Refreshes the nearest structure's blocks. Requires confirmation.");
 		commands.put("validatenearest", "Validates the nearest structure. Removing any validation penalties if it's ok.");
-		//commands.put("preview", "shows a preview of this structure at this location.");
 	}
 	
 	public void validatenearest_cmd() throws CivException {
 		Player player = getPlayer();
 		Resident resident = getResident();
 		Buildable buildable = CivGlobal.getNearestBuildable(player.getLocation());
-		
 		if (buildable.getTown() != resident.getTown()) {
 			throw new CivException("You can only validate structures inside your own town.");
 		}
@@ -73,7 +52,6 @@ public class BuildCommand extends CommandBase {
 		if (buildable.isIgnoreFloating()) {
 			throw new CivException(buildable.getDisplayName()+" is exempt from floating structure checks.");
 		}
-		
 		CivMessage.sendSuccess(player, "Running Validation on "+buildable.getDisplayName()+" at "+buildable.getCenterLocation()+"...");
 		buildable.validate(player);
 	}
@@ -87,13 +65,11 @@ public class BuildCommand extends CommandBase {
 	public void repairnearest_cmd() throws CivException {
 		Town town = getSelectedTown();
 		Player player = getPlayer();
-		
+		Structure nearest = town.getNearestStrucutre(player.getLocation());
 		if (War.isWarTime()) {
 			throw new CivException("You cannot repair structures during WarTime.");
 		}
 		
-		Structure nearest = town.getNearestStrucutre(player.getLocation());
-			
 		if (nearest == null) {
 			throw new CivException ("Couldn't find a structure.");
 		}
@@ -105,14 +81,13 @@ public class BuildCommand extends CommandBase {
 		if (!town.getCiv().hasTechnology(nearest.getRequiredTechnology())) {
 			throw new CivException ("You do not have the technology to repair "+nearest.getDisplayName()+" at "+nearest.getCorner());
 		}
-	
+		
 		if (args.length < 2 || !args[1].equalsIgnoreCase("yes")) {
 			CivMessage.send(player, CivColor.LightGreen+"Are you sure you want to repair the structure "+CivColor.Yellow+nearest.getDisplayName()+
 					CivColor.LightGreen+" at "+CivColor.Yellow+nearest.getCorner()+CivColor.LightGreen+" for "+CivColor.Yellow+nearest.getRepairCost()+" coins?");
 			CivMessage.send(player, CivColor.LightGray+"If yes, use /build repairnearest yes");
 			return;
 		}
-		
 		town.repairStructure(nearest);		
 		CivMessage.sendSuccess(player, nearest.getDisplayName()+" repaired.");
 	}
@@ -120,9 +95,7 @@ public class BuildCommand extends CommandBase {
 	public void demolishnearest_cmd() throws CivException {
 		Town town = getSelectedTown();
 		Player player = getPlayer();
-		
 		Structure nearest = town.getNearestStrucutre(player.getLocation());
-		
 		if (nearest == null) {
 			throw new CivException ("Couldn't find a structure.");
 		}
@@ -131,20 +104,15 @@ public class BuildCommand extends CommandBase {
 			CivMessage.send(player, CivColor.LightGreen+"Are you sure you want to demolish the structure "+CivColor.Yellow+nearest.getDisplayName()+
 					CivColor.LightGreen+" at "+CivColor.Yellow+nearest.getCorner()+CivColor.LightGreen+" ?");
 			CivMessage.send(player, CivColor.LightGray+"If yes, use /build demolishnearest yes");
-						
 			nearest.flashStructureBlocks();
 			return;
 		}
-		
 		town.demolish(nearest, false);
 		CivMessage.sendSuccess(player, nearest.getDisplayName()+" at "+nearest.getCorner()+" demolished.");
 	}
 	
-	
 	public void demolish_cmd() throws CivException {
 		Town town = getSelectedTown();
-		
-		
 		if (args.length < 2) {
 			CivMessage.sendHeading(sender, "Demolish Structure");
 			for (Structure struct : town.getStructures()) {
@@ -153,7 +121,6 @@ public class BuildCommand extends CommandBase {
 			}
 			return;
 		}
-		
 		try {
 			BlockCoord coord = new BlockCoord(args[1]);
 			Structure struct = town.getStructure(coord);
@@ -179,16 +146,11 @@ public class BuildCommand extends CommandBase {
 		for (BuildAsyncTask task : town.build_tasks) {
 			Buildable b = task.buildable;
 			DecimalFormat df = new DecimalFormat();
-			
 			CivMessage.send(sender, CivColor.LightPurple+b.getDisplayName()+": "+CivColor.Yellow+"("+df.format(b.getBuiltHammers()) + "/"+b.getHammerCost()+")"+
 					CivColor.LightPurple+" Blocks "+CivColor.Yellow+"("+b.builtBlockCount+"/"+b.getTotalBlockCount()+")");
-			
-			//CivMessage.send(sender, CivColor.LightPurple+b.getDisplayName()+" "+CivColor.Yellow+"("+
-				//	b.builtBlockCount+" / "+b.getTotalBlockCount()+")");
 		}
-		
 	}
-
+	
 	public void list_available_structures() throws CivException {
 		CivMessage.sendHeading(sender, "Available Structures");
 		Town town = getSelectedTown();
@@ -200,12 +162,8 @@ public class BuildCommand extends CommandBase {
 				} else {
 					leftString = ""+(sinfo.limit - town.getStructureTypeCount(sinfo.id));
 				}
-				
-				CivMessage.send(sender, CivColor.LightPurple+sinfo.displayName+
-						CivColor.Yellow+
-						" Cost: "+sinfo.cost+
-						" Upkeep: "+sinfo.upkeep+" Hammers: "+sinfo.hammer_cost+ 
-						" Left: "+leftString);
+				CivMessage.send(sender, CivColor.LightPurple+sinfo.displayName+CivColor.Yellow+" Cost: "+sinfo.cost+
+						" Upkeep: "+sinfo.upkeep+" Hammers: "+sinfo.hammer_cost+ " Left: "+leftString);
 			}
 		}
 	}
@@ -254,19 +212,17 @@ public class BuildCommand extends CommandBase {
 			fullArgs += arg + " ";
 		}
 		fullArgs = fullArgs.trim();
-		
 		buildByName(fullArgs);
 	}
-
+	
 	public void preview_cmd() throws CivException {
+		Town town = getSelectedTown();
 		String fullArgs = this.combineArgs(this.stripArgs(args, 1));
-		
 		ConfigBuildableInfo sinfo = CivSettings.getBuildableInfoByName(fullArgs);
 		if (sinfo == null) {
 			throw new CivException("Unknown structure "+fullArgs);
 		}
 		
-		Town town = getSelectedTown();
 		if (sinfo.isWonder) {
 			Wonder wonder = Wonder.newWonder(getPlayer().getLocation(), sinfo.id, town);
 			try {
@@ -287,15 +243,12 @@ public class BuildCommand extends CommandBase {
 		CivMessage.sendSuccess(sender, "Showing preview.");
 	}
 	
-	
 	private void buildByName(String fullArgs) throws CivException {
+		Town town = getSelectedTown();
 		ConfigBuildableInfo sinfo = CivSettings.getBuildableInfoByName(fullArgs);
-
 		if (sinfo == null) {
 			throw new CivException("Unknown structure "+fullArgs);
 		}
-		
-		Town town = getSelectedTown();
 		
 		if (sinfo.isWonder) {
 			Wonder wonder = Wonder.newWonder(getPlayer().getLocation(), sinfo.id, town);
@@ -314,25 +267,17 @@ public class BuildCommand extends CommandBase {
 				throw new CivException("Internal IO Error.");
 			}
 		}
-		
-//		if (sinfo.isWonder) {
-//			town.buildWonder(getPlayer(), sinfo.id, getPlayer().getLocation());
-//		} else {
-//			town.buildStructure(getPlayer(), sinfo.id, getPlayer().getLocation());
-//		}
-//		CivMessage.sendSuccess(sender, "Started building "+sinfo.displayName);
 	}
-
+	
 	@Override
 	public void showHelp() {
 		showBasicHelp();		
 		CivMessage.send(sender, CivColor.LightPurple+command+" "+CivColor.Yellow+"[structure name] "+
 				CivColor.LightGray+"builds this structure at your location.");
 	}
-
+	
 	@Override
 	public void permissionCheck() throws CivException {
 		validMayorAssistantLeader();
 	}
-
 }

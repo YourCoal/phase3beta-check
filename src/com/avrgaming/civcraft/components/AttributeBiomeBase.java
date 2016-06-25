@@ -1,6 +1,6 @@
-package com.avrgaming.civcraft.components;
+package com.civcraft.components;
 
-import com.avrgaming.civcraft.object.CultureChunk;
+import com.civcraft.object.CultureChunk;
 
 public abstract class AttributeBiomeBase extends Component {
 

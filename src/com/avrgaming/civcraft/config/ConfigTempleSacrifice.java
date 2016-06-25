@@ -16,7 +16,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from AVRGAMING LLC.
  */
-package com.avrgaming.civcraft.config;
+package com.civcraft.config;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -26,7 +26,7 @@ import java.util.Map;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.EntityType;
 
-import com.avrgaming.civcraft.main.CivLog;
+import com.civcraft.main.CivLog;
 
 public class ConfigTempleSacrifice {
 	public List<String> entites;

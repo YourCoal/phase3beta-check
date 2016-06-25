@@ -1,28 +1,12 @@
-/*************************************************************************
- * 
- * AVRGAMING LLC
- * __________________
- * 
- *  [2013] AVRGAMING LLC
- *  All Rights Reserved.
- * 
- * NOTICE:  All information contained herein is, and remains
- * the property of AVRGAMING LLC and its suppliers,
- * if any.  The intellectual and technical concepts contained
- * herein are proprietary to AVRGAMING LLC
- * and its suppliers and may be covered by U.S. and Foreign Patents,
- * patents in process, and are protected by trade secret or copyright law.
- * Dissemination of this information or reproduction of this material
- * is strictly forbidden unless prior written permission is obtained
- * from AVRGAMING LLC.
- */
-package com.avrgaming.civcraft.listener;
+package com.civcraft.listener;
 
 import gpl.AttributeUtil;
 
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Random;
+
+import moblib.moblib.MobLib;
 
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -56,29 +40,28 @@ import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
-import com.avrgaming.civcraft.cache.ArrowFiredCache;
-import com.avrgaming.civcraft.cache.CivCache;
-import com.avrgaming.civcraft.config.CivSettings;
-import com.avrgaming.civcraft.config.ConfigRemovedRecipes;
-import com.avrgaming.civcraft.exception.CivException;
-import com.avrgaming.civcraft.exception.InvalidConfiguration;
-import com.avrgaming.civcraft.items.ItemDurabilityEntry;
-import com.avrgaming.civcraft.items.components.Catalyst;
-import com.avrgaming.civcraft.loreenhancements.LoreEnhancement;
-import com.avrgaming.civcraft.lorestorage.ItemChangeResult;
-import com.avrgaming.civcraft.lorestorage.LoreCraftableMaterial;
-import com.avrgaming.civcraft.lorestorage.LoreGuiItem;
-import com.avrgaming.civcraft.lorestorage.LoreMaterial;
-import com.avrgaming.civcraft.main.CivData;
-import com.avrgaming.civcraft.main.CivGlobal;
-import com.avrgaming.civcraft.main.CivLog;
-import com.avrgaming.civcraft.main.CivMessage;
-import com.avrgaming.civcraft.mobs.components.MobComponent;
-import com.avrgaming.civcraft.object.Resident;
-import com.avrgaming.civcraft.threading.TaskMaster;
-import com.avrgaming.civcraft.util.CivColor;
-import com.avrgaming.civcraft.util.ItemManager;
-import com.avrgaming.moblib.MobLib;
+import com.civcraft.cache.ArrowFiredCache;
+import com.civcraft.cache.CivCache;
+import com.civcraft.config.CivSettings;
+import com.civcraft.config.ConfigRemovedRecipes;
+import com.civcraft.exception.CivException;
+import com.civcraft.exception.InvalidConfiguration;
+import com.civcraft.items.ItemDurabilityEntry;
+import com.civcraft.items.components.Catalyst;
+import com.civcraft.loreenhancements.LoreEnhancement;
+import com.civcraft.lorestorage.ItemChangeResult;
+import com.civcraft.lorestorage.LoreCraftableMaterial;
+import com.civcraft.lorestorage.LoreGuiItem;
+import com.civcraft.lorestorage.LoreMaterial;
+import com.civcraft.main.CivData;
+import com.civcraft.main.CivGlobal;
+import com.civcraft.main.CivLog;
+import com.civcraft.main.CivMessage;
+import com.civcraft.mobs.components.MobComponent;
+import com.civcraft.object.Resident;
+import com.civcraft.threading.TaskMaster;
+import com.civcraft.util.CivColor;
+import com.civcraft.util.ItemManager;
 
 public class CustomItemManager implements Listener {
 	
@@ -98,24 +81,21 @@ public class CustomItemManager implements Listener {
 	
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onBlockBreakSpawnItems(BlockBreakEvent event) {
-		if (event.getBlock().getType().equals(Material.LAPIS_ORE)) {
+		if (event.getBlock().getType().equals(Material.GOLD_ORE)) {
 			if (event.getPlayer().getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH)) {
 				return;
 			}
 			
 			event.setCancelled(true);
-			
 			ItemManager.setTypeIdAndData(event.getBlock(), CivData.AIR, (byte)0, true);
-			
 			try {
 				Random rand = new Random();
-
-				int min = CivSettings.getInteger(CivSettings.materialsConfig, "tungsten_min_drop");
+				int min = CivSettings.getInteger(CivSettings.materialsConfig, "bronze_min");
 				int max;
 				if (event.getPlayer().getItemInHand().containsEnchantment(Enchantment.LOOT_BONUS_BLOCKS)) {
-					max = CivSettings.getInteger(CivSettings.materialsConfig, "tungsten_max_drop_with_fortune");
+					max = CivSettings.getInteger(CivSettings.materialsConfig, "bronze_max_fortune");
 				} else {
-					max = CivSettings.getInteger(CivSettings.materialsConfig, "tungsten_max_drop");
+					max = CivSettings.getInteger(CivSettings.materialsConfig, "bronze_max");
 				}
 				
 				int randAmount = rand.nextInt(min + max);
@@ -125,10 +105,79 @@ public class CustomItemManager implements Listener {
 				}
 				
 				for (int i = 0; i < randAmount; i++) {
-					ItemStack stack = LoreMaterial.spawn(LoreMaterial.materialMap.get("mat_tungsten_ore"));
-					event.getPlayer().getWorld().dropItemNaturally(event.getBlock().getLocation(), stack);
+					ItemStack stack1 = LoreMaterial.spawn(LoreMaterial.materialMap.get("civ:bronze_ore"));
+					ItemStack stack2 = ItemManager.createItemStack(CivData.GOLD_INGOT, 1);
+					event.getPlayer().getWorld().dropItemNaturally(event.getBlock().getLocation(), stack1);
+					event.getPlayer().getWorld().dropItem(event.getBlock().getLocation(), stack2);
+				}
+			} catch (InvalidConfiguration e) {
+				e.printStackTrace();
+				return;
+			}
+		}
+		
+		if (event.getBlock().getType().equals(Material.LAPIS_ORE)) {
+			if (event.getPlayer().getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH)) {
+				return;
+			}
+			
+			event.setCancelled(true);
+			ItemManager.setTypeIdAndData(event.getBlock(), CivData.AIR, (byte)0, true);
+			try {
+				Random rand = new Random();
+				int min = CivSettings.getInteger(CivSettings.materialsConfig, "steel_min");
+				int max;
+				if (event.getPlayer().getItemInHand().containsEnchantment(Enchantment.LOOT_BONUS_BLOCKS)) {
+					max = CivSettings.getInteger(CivSettings.materialsConfig, "steel_max_fortune");
+				} else {
+					max = CivSettings.getInteger(CivSettings.materialsConfig, "steel_max");
 				}
 				
+				int randAmount = rand.nextInt(min + max);
+				randAmount -= min;
+				if (randAmount <= 0) {
+					randAmount = 1;
+				}
+				
+				for (int i = 0; i < randAmount; i++) {
+					ItemStack stack1 = LoreMaterial.spawn(LoreMaterial.materialMap.get("civ:steel_ore"));
+					event.getPlayer().getWorld().dropItemNaturally(event.getBlock().getLocation(), stack1);
+				}
+			} catch (InvalidConfiguration e) {
+				e.printStackTrace();
+				return;
+			}
+		}
+		
+		if (event.getBlock().getType().equals(Material.DIAMOND_ORE)) {
+			if (event.getPlayer().getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH)) {
+				return;
+			}
+			
+			event.setCancelled(true);
+			ItemManager.setTypeIdAndData(event.getBlock(), CivData.AIR, (byte)0, true);
+			try {
+				Random rand = new Random();
+				int min = CivSettings.getInteger(CivSettings.materialsConfig, "titanium_min");
+				int max;
+				if (event.getPlayer().getItemInHand().containsEnchantment(Enchantment.LOOT_BONUS_BLOCKS)) {
+					max = CivSettings.getInteger(CivSettings.materialsConfig, "titanium_max_fortune");
+				} else {
+					max = CivSettings.getInteger(CivSettings.materialsConfig, "titanium_max");
+				}
+				
+				int randAmount = rand.nextInt(min + max);
+				randAmount -= min;
+				if (randAmount <= 0) {
+					randAmount = 1;
+				}
+				
+				for (int i = 0; i < randAmount; i++) {
+					ItemStack stack1 = LoreMaterial.spawn(LoreMaterial.materialMap.get("civ:titanium_ore"));
+					ItemStack stack2 = ItemManager.createItemStack(CivData.DIAMOND, 1);
+					event.getPlayer().getWorld().dropItemNaturally(event.getBlock().getLocation(), stack1);
+					event.getPlayer().getWorld().dropItem(event.getBlock().getLocation(), stack2);
+				}
 			} catch (InvalidConfiguration e) {
 				e.printStackTrace();
 				return;
@@ -532,7 +581,7 @@ public class CustomItemManager implements Listener {
 		
 		if (ItemManager.getId(event.getItem().getItemStack()) == ItemManager.getId(Material.RAW_FISH)
 				&& ItemManager.getData(event.getItem().getItemStack()) == 
-					ItemManager.getData(ItemManager.getMaterialData(CivData.FISH_RAW, CivData.CLOWNFISH))) {
+					ItemManager.getData(ItemManager.getMaterialData(CivData.FISH, CivData.CLOWNFISH))) {
 			LoreCraftableMaterial craftMat = LoreCraftableMaterial.getCraftMaterial(event.getItem().getItemStack());
 			if (craftMat == null) {
 				/* Found a vanilla slime ball. */
@@ -548,7 +597,7 @@ public class CustomItemManager implements Listener {
 		
 		if (ItemManager.getId(event.getItem().getItemStack()) == ItemManager.getId(Material.RAW_FISH)
 				&& ItemManager.getData(event.getItem().getItemStack()) == 
-					ItemManager.getData(ItemManager.getMaterialData(CivData.FISH_RAW, CivData.PUFFERFISH))) {
+					ItemManager.getData(ItemManager.getMaterialData(CivData.FISH, CivData.PUFFERFISH))) {
 			LoreCraftableMaterial craftMat = LoreCraftableMaterial.getCraftMaterial(event.getItem().getItemStack());
 			if (craftMat == null) {
 				/* Found a vanilla slime ball. */
@@ -584,7 +633,7 @@ public class CustomItemManager implements Listener {
 		
 		if (ItemManager.getId(event.getCurrentItem()) == ItemManager.getId(Material.RAW_FISH)
 				&& ItemManager.getData(event.getCurrentItem()) == 
-					ItemManager.getData(ItemManager.getMaterialData(CivData.FISH_RAW, CivData.CLOWNFISH))) {
+					ItemManager.getData(ItemManager.getMaterialData(CivData.FISH, CivData.CLOWNFISH))) {
 			LoreCraftableMaterial craftMat = LoreCraftableMaterial.getCraftMaterial(event.getCurrentItem());
 			if (craftMat == null) {
 				/* Found a vanilla slime ball. */
@@ -597,7 +646,7 @@ public class CustomItemManager implements Listener {
 		
 		if (ItemManager.getId(event.getCurrentItem()) == ItemManager.getId(Material.RAW_FISH)
 				&& ItemManager.getData(event.getCurrentItem()) == 
-					ItemManager.getData(ItemManager.getMaterialData(CivData.FISH_RAW, CivData.PUFFERFISH))) {
+					ItemManager.getData(ItemManager.getMaterialData(CivData.FISH, CivData.PUFFERFISH))) {
 			LoreCraftableMaterial craftMat = LoreCraftableMaterial.getCraftMaterial(event.getCurrentItem());
 			if (craftMat == null) {
 				/* Found a vanilla slime ball. */

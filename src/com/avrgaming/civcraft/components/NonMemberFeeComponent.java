@@ -16,14 +16,14 @@
  * is strictly forbidden unless prior written permission is obtained
  * from AVRGAMING LLC.
  */
-package com.avrgaming.civcraft.components;
+package com.civcraft.components;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
-import com.avrgaming.civcraft.main.CivGlobal;
-import com.avrgaming.civcraft.sessiondb.SessionEntry;
-import com.avrgaming.civcraft.structure.Buildable;
+import com.civcraft.main.CivGlobal;
+import com.civcraft.sessiondb.SessionEntry;
+import com.civcraft.structure.Buildable;
 
 public class NonMemberFeeComponent extends Component {
 

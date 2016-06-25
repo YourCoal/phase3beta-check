@@ -1,115 +1,103 @@
-package com.avrgaming.civcraft.mobs;
+package com.civcraft.mobs;
 
-import net.minecraft.server.v1_7_R4.EntityCreature;
-import net.minecraft.server.v1_7_R4.EntityHuman;
-import net.minecraft.server.v1_7_R4.EntityInsentient;
-import net.minecraft.server.v1_7_R4.PathfinderGoalLookAtPlayer;
-import net.minecraft.server.v1_7_R4.PathfinderGoalMeleeAttack;
-import net.minecraft.server.v1_7_R4.PathfinderGoalNearestAttackableTarget;
-import net.minecraft.server.v1_7_R4.PathfinderGoalRandomStroll;
+import moblib.mob.ICustomMob;
+import moblib.mob.MobBaseIronGolem;
+import net.minecraft.server.v1_8_R3.EntityCreature;
+import net.minecraft.server.v1_8_R3.EntityHuman;
+import net.minecraft.server.v1_8_R3.EntityInsentient;
+import net.minecraft.server.v1_8_R3.PathfinderGoalLookAtPlayer;
+import net.minecraft.server.v1_8_R3.PathfinderGoalMeleeAttack;
+import net.minecraft.server.v1_8_R3.PathfinderGoalNearestAttackableTarget;
+import net.minecraft.server.v1_8_R3.PathfinderGoalRandomStroll;
 
+import org.bukkit.Material;
 import org.bukkit.block.Biome;
 
-import com.avrgaming.civcraft.mobs.MobSpawner.CustomMobLevel;
-import com.avrgaming.civcraft.mobs.MobSpawner.CustomMobType;
-import com.avrgaming.civcraft.mobs.components.MobComponentDefense;
-import com.avrgaming.mob.ICustomMob;
-import com.avrgaming.mob.MobBaseIronGolem;
+import com.civcraft.mobs.MobSpawner.CustomMobLevel;
+import com.civcraft.mobs.MobSpawner.CustomMobType;
+import com.civcraft.mobs.components.MobComponentDefense;
+import com.civcraft.util.ItemManager;
 
 public class Behemoth extends CommonCustomMob implements ICustomMob {
-
+	
 	public void onCreate() {
 	    initLevelAndType();
-
 		getGoalSelector().a(7, new PathfinderGoalRandomStroll((EntityCreature) entity, 1.0D));
 		getGoalSelector().a(8, new PathfinderGoalLookAtPlayer((EntityInsentient) entity, EntityHuman.class, 8.0F));
 	    getGoalSelector().a(2, new PathfinderGoalMeleeAttack((EntityCreature) entity, EntityHuman.class, 1.0D, false));
-	    getTargetSelector().a(2, new PathfinderGoalNearestAttackableTarget((EntityCreature) entity, EntityHuman.class, 0, true));
-
+	    getTargetSelector().a(2, new PathfinderGoalNearestAttackableTarget<EntityHuman>((EntityCreature) entity, EntityHuman.class, true));
 	    this.setName(this.getLevel().getName()+" "+this.getType().getName());
 	}
-
+	
 	public void onCreateAttributes() {
 		MobComponentDefense defense;
-	    this.setKnockbackResistance(1.0D);
-	    this.setMovementSpeed(0.15);
-
+	    this.setKnockbackResistance(0.85);
 		switch (this.getLevel()) {
 		case LESSER:
-		    defense = new MobComponentDefense(3.5);
-		    setMaxHealth(75);
-		    modifySpeed(1.3);
-		    this.addDrop("mat_ionic_crystal_fragment_1", 0.05);
-		    
-		    this.addDrop("mat_forged_clay", 0.1);
-		    this.addDrop("mat_crafted_reeds", 0.1);
-		    this.addDrop("mat_crafted_sticks", 0.1);
-		    this.coinDrop(1, 25);
+		    defense = new MobComponentDefense(6);
+		    setMaxHealth(12.0);
+		    this.setAttack(4.0);
+		    this.addDrop("civ:refined_sugar", 0.1);
+		    this.addDrop("civ:crafted_sticks", 0.1);
+		    this.addDrop("civ:crafted_string", 0.1);
+			this.addVanillaDrop(ItemManager.getId(Material.IRON_INGOT), (short)0, 0.05);
+		    this.coinDrop(1, 15);
 			break;
+			
 		case GREATER:
-		    defense = new MobComponentDefense(10);
-		    setMaxHealth(125.0);
-		    modifySpeed(1.4);
-		    this.addDrop("mat_ionic_crystal_fragment_2", 0.05);
-
-		    this.addDrop("mat_steel_plate", 0.1);
-		    this.addDrop("mat_steel_ingot", 0.05);
-		    this.addDrop("mat_clay_molding", 0.05);
-
-		    this.addDrop("mat_varnish", 0.01);
-		    this.addDrop("mat_sticky_resin", 0.05);
-		    this.coinDrop(10, 50);
+		    defense = new MobComponentDefense(13);
+		    setMaxHealth(16.0);
+		    this.setAttack(8.5);
+			this.addVanillaDrop(ItemManager.getId(Material.IRON_INGOT), (short)0, 0.1);
+			this.addVanillaDrop(ItemManager.getId(Material.GOLD_INGOT), (short)0, 0.05);
+		    this.addDrop("civ:bronze_ore", 0.05);
+		    this.addDrop("civ:compressed_sugar", 0.1);
+		    this.addDrop("civ:refined_sticks", 0.1);
+		    this.addDrop("civ:refined_string", 0.1);
+		    this.coinDrop(5, 35);
 		    break;
+		    
 		case ELITE:
-		    defense = new MobComponentDefense(16);
-		    setMaxHealth(150.0);
-		    modifySpeed(1.5);
-		    this.addDrop("mat_ionic_crystal_fragment_3", 0.05);
-
-		    this.addDrop("mat_carbide_steel_plate", 0.1);
-		    this.addDrop("mat_carbide_steel_ingot", 0.05);
-		    this.addDrop("mat_clay_molding", 0.05);
-
-		    this.addDrop("mat_sticky_resin", 0.1);
-		    this.addDrop("mat_smithy_resin", 0.05);
-		    this.coinDrop(20, 80);
+		    defense = new MobComponentDefense(17);
+		    setMaxHealth(20.0);
+		    this.setAttack(13.0);
+			this.addVanillaDrop(ItemManager.getId(Material.GOLD_INGOT), (short)0, 0.1);
+			this.addVanillaDrop(ItemManager.getId(Material.INK_SACK), (short)4, 0.2);
+		    this.addDrop("civ:steel_ore", 0.05);
+		    this.addDrop("civ:compacted_sticks", 0.1);
+		    this.addDrop("civ:wolven_threading", 0.1);
+		    this.coinDrop(15, 50);
 			break;
+			
 		case BRUTAL:
-		    this.addDrop("mat_ionic_crystal_fragment_4", 0.05);
-		    
-		    this.addDrop("mat_tungsten_plate", 0.1);
-		    this.addDrop("mat_tungsten_ingot", 0.05);
-		    this.addDrop("mat_clay_tungsten_casting", 0.05);
-		    
-		    this.addDrop("mat_sticky_resin", 0.1);
-		    this.addDrop("mat_smithy_resin", 0.05);
-
-		    defense = new MobComponentDefense(20);
-		    setMaxHealth(160.0);
-		    modifySpeed(1.6);
-		    this.coinDrop(20, 150);
-
+		    defense = new MobComponentDefense(21);
+		    setMaxHealth(22.0);
+		    this.setAttack(17.5);
+			this.addVanillaDrop(ItemManager.getId(Material.INK_SACK), (short)4, 0.4);
+			this.addVanillaDrop(ItemManager.getId(Material.DIAMOND), (short)0, 0.05);
+		    this.addDrop("civ:titanium_ore", 0.05);
+		    this.addDrop("civ:refined_compacted_sticks", 0.1);
+		    this.addDrop("civ:refined_wolven_threading", 0.1);
+		    this.coinDrop(30, 75);
 			break;
 		default:
 		    defense = new MobComponentDefense(2);
 			break;
 		}
-		
 	    this.addComponent(defense);
 	}
-
+	
 	@Override
 	public String getBaseEntity() {
 		return MobBaseIronGolem.class.getName();
 	}
-
+	
 	@Override
 	public String getClassName() {
 		return Behemoth.class.getName();
 	}
-
+	
 	public static void register() {
-		
 		    setValidBiome(CustomMobType.BEHEMOTH, CustomMobLevel.LESSER, Biome.FROZEN_RIVER);
 		    setValidBiome(CustomMobType.BEHEMOTH, CustomMobLevel.LESSER, Biome.FROZEN_OCEAN);
 		    setValidBiome(CustomMobType.BEHEMOTH, CustomMobLevel.LESSER, Biome.COLD_BEACH);
@@ -123,5 +111,4 @@ public class Behemoth extends CommonCustomMob implements ICustomMob {
 
 		    setValidBiome(CustomMobType.BEHEMOTH, CustomMobLevel.BRUTAL, Biome.ICE_PLAINS_SPIKES);
 	}
-	
 }

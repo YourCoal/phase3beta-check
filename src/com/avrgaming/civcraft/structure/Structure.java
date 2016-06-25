@@ -1,22 +1,4 @@
-/*************************************************************************
- * 
- * AVRGAMING LLC
- * __________________
- * 
- *  [2013] AVRGAMING LLC
- *  All Rights Reserved.
- * 
- * NOTICE:  All information contained herein is, and remains
- * the property of AVRGAMING LLC and its suppliers,
- * if any.  The intellectual and technical concepts contained
- * herein are proprietary to AVRGAMING LLC
- * and its suppliers and may be covered by U.S. and Foreign Patents,
- * patents in process, and are protected by trade secret or copyright law.
- * Dissemination of this information or reproduction of this material
- * is strictly forbidden unless prior written permission is obtained
- * from AVRGAMING LLC.
- */
-package com.avrgaming.civcraft.structure;
+package com.civcraft.structure;
 
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -29,20 +11,20 @@ import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
-import com.avrgaming.civcraft.components.Component;
-import com.avrgaming.civcraft.config.CivSettings;
-import com.avrgaming.civcraft.database.SQL;
-import com.avrgaming.civcraft.database.SQLUpdate;
-import com.avrgaming.civcraft.exception.CivException;
-import com.avrgaming.civcraft.main.CivGlobal;
-import com.avrgaming.civcraft.main.CivLog;
-import com.avrgaming.civcraft.main.CivMessage;
-import com.avrgaming.civcraft.object.Resident;
-import com.avrgaming.civcraft.object.Town;
-import com.avrgaming.civcraft.road.Road;
-import com.avrgaming.civcraft.template.Template;
-import com.avrgaming.civcraft.util.BlockCoord;
-import com.avrgaming.civcraft.util.CivColor;
+import com.civcraft.components.Component;
+import com.civcraft.config.CivSettings;
+import com.civcraft.database.SQL;
+import com.civcraft.database.SQLUpdate;
+import com.civcraft.exception.CivException;
+import com.civcraft.main.CivGlobal;
+import com.civcraft.main.CivLog;
+import com.civcraft.main.CivMessage;
+import com.civcraft.object.Resident;
+import com.civcraft.object.Town;
+import com.civcraft.road.Road;
+import com.civcraft.template.Template;
+import com.civcraft.util.BlockCoord;
+import com.civcraft.util.CivColor;
 
 public class Structure extends Buildable {
 		
@@ -70,16 +52,35 @@ public class Structure extends Buildable {
 		/* Override in children */
 	}
 	
-	/*
-	 * I'm being a bit lazy here, I don't want to switch on the type id in more than one place
+	/* I'm being a bit lazy here, I don't want to switch on the type id in more than one place
 	 * so I've overloaded this function to handle both new structures and loaded ones. 
 	 * Either the center,id, and town are set (new structure being created now)
-	 * or result set is not null (structure being loaded)
-	 */
+	 * or result set is not null (structure being loaded) */
 	private static Structure _newStructure(Location center, String id, Town town, ResultSet rs) throws CivException, SQLException {
 		Structure struct;
 		
 		switch (id) {
+		case "ti_fishery":
+			if (rs == null) {
+				struct = (Structure) new Fishery(center, id, town);
+			} else {
+				struct = (Structure) new Fishery(rs);
+			}
+			break;
+		case "ti_lab":
+			if (rs == null) {
+				struct = (Structure) new Lab(center, id, town);
+			} else {
+				struct = (Structure) new Lab(rs);
+			}
+			break;
+		case "s_quarry":
+			if (rs == null) {
+				struct = (Structure) new Quarry(center, id, town);
+			} else {
+				struct = (Structure) new Quarry(rs);
+			}
+			break;
 		case "s_bank":
 			if (rs == null) {
 				struct = (Structure) new Bank(center, id, town);
@@ -87,15 +88,13 @@ public class Structure extends Buildable {
 				struct = (Structure) new Bank(rs);
 			}
 			break;
-		
 		case "s_trommel":
 			if (rs == null) {
 				struct = (Structure) new Trommel(center, id, town);
 			} else {
 				struct = (Structure) new Trommel(rs);
 			}
-			break;	
-			
+			break;
 		case "s_store":
 			if (rs == null) {
 				struct = (Structure) new Store(center, id, town);
@@ -222,9 +221,9 @@ public class Structure extends Buildable {
 			break;
 		case "s_shipyard":
 			if (rs == null) {
-				struct = (Structure) new WaterStructure(center, id, town);
+				struct = (Structure) new Shipyard(center, id, town);
 			} else {
-				struct = (Structure) new WaterStructure(rs);
+				struct = (Structure) new Shipyard(rs);
 			}
 			break;
 		case "ti_wall":
@@ -651,7 +650,7 @@ public class Structure extends Buildable {
 		List<HashMap<String,String>> compInfoList = this.getComponentInfoList();
 		if (compInfoList != null) {
 			for (HashMap<String,String> compInfo : compInfoList) {
-				String className = "com.avrgaming.civcraft.components."+compInfo.get("name");
+				String className = "com.civcraft.components."+compInfo.get("name");
 				Class<?> someClass;
 				try {
 					someClass = Class.forName(className);

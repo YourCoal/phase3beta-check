@@ -16,11 +16,11 @@
  * is strictly forbidden unless prior written permission is obtained
  * from AVRGAMING LLC.
  */
-package com.avrgaming.civcraft.components;
+package com.civcraft.components;
 
 import java.util.ArrayList;
 
-import com.avrgaming.civcraft.structure.Buildable;
+import com.civcraft.structure.Buildable;
 
 public class RegisterComponentAsync implements Runnable {
 

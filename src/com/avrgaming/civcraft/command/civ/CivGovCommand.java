@@ -1,31 +1,13 @@
-/*************************************************************************
- * 
- * AVRGAMING LLC
- * __________________
- * 
- *  [2013] AVRGAMING LLC
- *  All Rights Reserved.
- * 
- * NOTICE:  All information contained herein is, and remains
- * the property of AVRGAMING LLC and its suppliers,
- * if any.  The intellectual and technical concepts contained
- * herein are proprietary to AVRGAMING LLC
- * and its suppliers and may be covered by U.S. and Foreign Patents,
- * patents in process, and are protected by trade secret or copyright law.
- * Dissemination of this information or reproduction of this material
- * is strictly forbidden unless prior written permission is obtained
- * from AVRGAMING LLC.
- */
-package com.avrgaming.civcraft.command.civ;
+package com.civcraft.command.civ;
 
 import java.util.ArrayList;
 
-import com.avrgaming.civcraft.command.CommandBase;
-import com.avrgaming.civcraft.config.ConfigGovernment;
-import com.avrgaming.civcraft.exception.CivException;
-import com.avrgaming.civcraft.main.CivMessage;
-import com.avrgaming.civcraft.object.Civilization;
-import com.avrgaming.civcraft.util.CivColor;
+import com.civcraft.command.CommandBase;
+import com.civcraft.config.ConfigGovernment;
+import com.civcraft.exception.CivException;
+import com.civcraft.main.CivMessage;
+import com.civcraft.object.Civilization;
+import com.civcraft.util.CivColor;
 
 public class CivGovCommand extends CommandBase {
 
@@ -102,7 +84,6 @@ public class CivGovCommand extends CommandBase {
 
 	@Override
 	public void permissionCheck() throws CivException {
-		validLeaderAdvisor();		
+		validLeader();
 	}
-
 }

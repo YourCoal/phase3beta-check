@@ -16,7 +16,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from AVRGAMING LLC.
  */
-package com.avrgaming.civcraft.structure;
+package com.civcraft.structure;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -40,30 +40,30 @@ import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import com.avrgaming.civcraft.config.CivSettings;
-import com.avrgaming.civcraft.config.ConfigCultureLevel;
-import com.avrgaming.civcraft.exception.CivException;
-import com.avrgaming.civcraft.exception.InvalidConfiguration;
-import com.avrgaming.civcraft.items.BonusGoodie;
-import com.avrgaming.civcraft.main.CivData;
-import com.avrgaming.civcraft.main.CivGlobal;
-import com.avrgaming.civcraft.main.CivLog;
-import com.avrgaming.civcraft.main.CivMessage;
-import com.avrgaming.civcraft.object.Buff;
-import com.avrgaming.civcraft.object.BuildableDamageBlock;
-import com.avrgaming.civcraft.object.ControlPoint;
-import com.avrgaming.civcraft.object.Resident;
-import com.avrgaming.civcraft.object.StructureBlock;
-import com.avrgaming.civcraft.object.Town;
-import com.avrgaming.civcraft.object.TownChunk;
-import com.avrgaming.civcraft.util.BlockCoord;
-import com.avrgaming.civcraft.util.ChunkCoord;
-import com.avrgaming.civcraft.util.CivColor;
-import com.avrgaming.civcraft.util.FireworkEffectPlayer;
-import com.avrgaming.civcraft.util.ItemFrameStorage;
-import com.avrgaming.civcraft.util.ItemManager;
-import com.avrgaming.civcraft.war.War;
-import com.avrgaming.civcraft.war.WarStats;
+import com.civcraft.config.CivSettings;
+import com.civcraft.config.ConfigCultureLevel;
+import com.civcraft.exception.CivException;
+import com.civcraft.exception.InvalidConfiguration;
+import com.civcraft.items.BonusGoodie;
+import com.civcraft.main.CivData;
+import com.civcraft.main.CivGlobal;
+import com.civcraft.main.CivLog;
+import com.civcraft.main.CivMessage;
+import com.civcraft.object.Buff;
+import com.civcraft.object.BuildableDamageBlock;
+import com.civcraft.object.ControlPoint;
+import com.civcraft.object.Resident;
+import com.civcraft.object.StructureBlock;
+import com.civcraft.object.Town;
+import com.civcraft.object.TownChunk;
+import com.civcraft.util.BlockCoord;
+import com.civcraft.util.ChunkCoord;
+import com.civcraft.util.CivColor;
+import com.civcraft.util.FireworkEffectPlayer;
+import com.civcraft.util.ItemFrameStorage;
+import com.civcraft.util.ItemManager;
+import com.civcraft.war.War;
+import com.civcraft.war.WarStats;
 
 public class TownHall extends Structure implements RespawnLocationHolder {
 
@@ -99,16 +99,14 @@ public class TownHall extends Structure implements RespawnLocationHolder {
 	public void delete() throws SQLException {
 		if (this.getTown() != null) {
 			/* Remove any protected item frames. */
-			for (ItemFrameStorage framestore : goodieFrames ) {
+			for (ItemFrameStorage framestore : goodieFrames) {
 				BonusGoodie goodie = CivGlobal.getBonusGoodie(framestore.getItem());
 				if (goodie != null) {
 					goodie.replenish();
 				}
-				
 				CivGlobal.removeProtectedItemFrame(framestore.getFrameID());
 			}
 		}
-		
 		super.delete();		
 	}
 	
@@ -121,6 +119,11 @@ public class TownHall extends Structure implements RespawnLocationHolder {
 		out += "<br/>Flat Tax: "+this.getTown().getFlatTax()*100+"%";
 		out += "<br/>Property Tax: "+this.getTown().getTaxRate()*100+"%";
 		return out;
+	}
+	
+	@Override
+	public String getMarkerIconName() {
+		return "compass";
 	}
 	
 	public void addTechBarBlock(BlockCoord coord, int index) {
@@ -185,19 +188,19 @@ public class TownHall extends Structure implements RespawnLocationHolder {
 
 		switch (direction) {
 		case CivData.DATA_SIGN_EAST:
-			attachedBlock = absCoord.getBlock().getRelative(BlockFace.WEST);
+			attachedBlock = absCoord.getBlock();
 			facingDirection = BlockFace.EAST;
 			break;
 		case CivData.DATA_SIGN_WEST:
-			attachedBlock = absCoord.getBlock().getRelative(BlockFace.EAST);
+			attachedBlock = absCoord.getBlock();
 			facingDirection = BlockFace.WEST;
 			break;
 		case CivData.DATA_SIGN_NORTH:
-			attachedBlock = absCoord.getBlock().getRelative(BlockFace.SOUTH);
+			attachedBlock = absCoord.getBlock();
 			facingDirection = BlockFace.NORTH;
 			break;
 		case CivData.DATA_SIGN_SOUTH:
-			attachedBlock = absCoord.getBlock().getRelative(BlockFace.NORTH);
+			attachedBlock = absCoord.getBlock();
 			facingDirection = BlockFace.SOUTH;
 			break;
 		default:
@@ -223,9 +226,9 @@ public class TownHall extends Structure implements RespawnLocationHolder {
 				e.printStackTrace();
 				return;
 			}
-			//if (facingDirection != BlockFace.EAST) {
-				//itemStore.setFacingDirection(facingDirection);
-			//}
+			if (facingDirection != BlockFace.EAST) {
+				itemStore.setFacingDirection(facingDirection);
+			}
 		}
 		
 		itemStore.setBuildable(this);
@@ -521,5 +524,16 @@ public class TownHall extends Structure implements RespawnLocationHolder {
 		}
 		
 		CivMessage.sendCiv(getCiv(), "Our "+this.getDisplayName()+" has been hit by a cannon! ("+this.hitpoints+"/"+this.getMaxHitPoints()+")");
+	}
+	
+	public void onTNTDamage(int damage) {
+		this.hitpoints -= damage;
+		
+		if (hitpoints <= 0) {
+			CivMessage.sendCiv(getCiv(), "Our "+this.getDisplayName()+" is out of hitpoints, walls can be destroyed by TNT blasts!");
+			hitpoints = 0;
+		}
+		
+		CivMessage.sendCiv(getCiv(), "Our "+this.getDisplayName()+" has been hit by TNT! ("+this.hitpoints+"/"+this.getMaxHitPoints()+")");
 	}
 }

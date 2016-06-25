@@ -16,7 +16,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from AVRGAMING LLC.
  */
-package com.avrgaming.civcraft.structure;
+package com.civcraft.structure;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -25,20 +25,21 @@ import java.util.ArrayList;
 import org.bukkit.Location;
 import org.bukkit.inventory.Inventory;
 
-import com.avrgaming.civcraft.components.AttributeBiomeRadiusPerLevel;
-import com.avrgaming.civcraft.components.ConsumeLevelComponent;
-import com.avrgaming.civcraft.components.ConsumeLevelComponent.Result;
-import com.avrgaming.civcraft.config.CivSettings;
-import com.avrgaming.civcraft.config.ConfigMineLevel;
-import com.avrgaming.civcraft.exception.CivException;
-import com.avrgaming.civcraft.exception.CivTaskAbortException;
-import com.avrgaming.civcraft.main.CivMessage;
-import com.avrgaming.civcraft.object.Buff;
-import com.avrgaming.civcraft.object.StructureChest;
-import com.avrgaming.civcraft.object.Town;
-import com.avrgaming.civcraft.threading.CivAsyncTask;
-import com.avrgaming.civcraft.util.CivColor;
-import com.avrgaming.civcraft.util.MultiInventory;
+import com.civcraft.components.AttributeBiomeRadiusPerLevel;
+import com.civcraft.components.ConsumeLevelComponent;
+import com.civcraft.components.ConsumeLevelComponent.Result;
+import com.civcraft.config.CivSettings;
+import com.civcraft.config.ConfigMineLevel;
+import com.civcraft.exception.CivException;
+import com.civcraft.exception.CivTaskAbortException;
+import com.civcraft.exception.InvalidConfiguration;
+import com.civcraft.main.CivMessage;
+import com.civcraft.object.Buff;
+import com.civcraft.object.StructureChest;
+import com.civcraft.object.Town;
+import com.civcraft.threading.CivAsyncTask;
+import com.civcraft.util.CivColor;
+import com.civcraft.util.MultiInventory;
 
 public class Mine extends Structure {
 
@@ -142,12 +143,27 @@ public class Mine extends Structure {
 		return this.getConsumeComponent().getLevel();
 	}
 	
+	public double getBonusHammers() {
+		int level = getLevel();
+		ConfigMineLevel lvl = CivSettings.mineLevels.get(level);
+		return lvl.hammers;	
+	}
+	
 	public double getHammersPerTile() {
 		AttributeBiomeRadiusPerLevel attrBiome = (AttributeBiomeRadiusPerLevel)this.getComponent("AttributeBiomeRadiusPerLevel");
 		double base = attrBiome.getBaseValue();
-	
 		double rate = 1;
-		rate += this.getTown().getBuffManager().getEffectiveDouble(Buff.ADVANCED_TOOLING);
+		rate += this.getTown().getBuffManager().getEffectiveDouble(Buff.ADVANCED_MINING);
+		
+		if (this.getCiv().hasTechnology("tech_atom_developing")) {
+			double bonus;
+			try {
+				bonus = CivSettings.getDouble(CivSettings.techsConfig, "atom_developing_mine_buff");
+				rate *= bonus;
+			} catch (InvalidConfiguration e) {
+				e.printStackTrace();
+			}
+		}
 		return (rate*base);
 	}
 
@@ -165,5 +181,4 @@ public class Mine extends Structure {
 	public Result getLastResult() {
 		return this.getConsumeComponent().getLastResult();
 	}
-
 }

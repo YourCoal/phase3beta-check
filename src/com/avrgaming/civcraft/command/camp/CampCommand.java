@@ -1,38 +1,21 @@
-/*************************************************************************
- * 
- * AVRGAMING LLC
- * __________________
- * 
- *  [2013] AVRGAMING LLC
- *  All Rights Reserved.
- * 
- * NOTICE:  All information contained herein is, and remains
- * the property of AVRGAMING LLC and its suppliers,
- * if any.  The intellectual and technical concepts contained
- * herein are proprietary to AVRGAMING LLC
- * and its suppliers and may be covered by U.S. and Foreign Patents,
- * patents in process, and are protected by trade secret or copyright law.
- * Dissemination of this information or reproduction of this material
- * is strictly forbidden unless prior written permission is obtained
- * from AVRGAMING LLC.
- */
-package com.avrgaming.civcraft.command.camp;
+package com.civcraft.command.camp;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import com.avrgaming.civcraft.camp.Camp;
-import com.avrgaming.civcraft.command.CommandBase;
-import com.avrgaming.civcraft.exception.CivException;
-import com.avrgaming.civcraft.lorestorage.LoreCraftableMaterial;
-import com.avrgaming.civcraft.main.CivGlobal;
-import com.avrgaming.civcraft.main.CivMessage;
-import com.avrgaming.civcraft.object.Resident;
-import com.avrgaming.civcraft.questions.JoinCampResponse;
-import com.avrgaming.civcraft.util.CivColor;
+import com.civcraft.camp.Camp;
+import com.civcraft.command.CommandBase;
+import com.civcraft.exception.CivException;
+import com.civcraft.lorestorage.LoreCraftableMaterial;
+import com.civcraft.main.CivGlobal;
+import com.civcraft.main.CivMessage;
+import com.civcraft.object.Resident;
+import com.civcraft.questions.JoinCampResponse;
+import com.civcraft.util.CivColor;
 
 public class CampCommand extends CommandBase {
 	public static final long INVITE_TIMEOUT = 30000; //30 seconds
@@ -41,7 +24,6 @@ public class CampCommand extends CommandBase {
 	public void init() {
 		command = "/camp";
 		displayName = "Camp";
-		
 		commands.put("undo", "Unbuilds the camp, issues a refund.");
 		commands.put("add", "[name] - adds this player to our camp.");
 		commands.put("remove", "[name] - removes this player from our camp.");
@@ -50,6 +32,48 @@ public class CampCommand extends CommandBase {
 		commands.put("info", "Shows information about your current camp.");
 		commands.put("disband", "Disbands this camp.");
 		commands.put("upgrade", "Manage camp upgrades.");
+		commands.put("refresh", "Refresh attatchable blocks (like ladders, doors, etc) in the camp.");
+		commands.put("location", "Shows the location of your camp.");
+	}
+	
+	public void location_cmd() throws CivException {
+		Resident resident = getResident();
+		if (!resident.hasCamp()) {
+			throw new CivException("You are not currently in a camp.");
+		}
+		
+		Camp camp = resident.getCamp();
+		if (camp != null) {
+			CivMessage.send(sender, "");
+			CivMessage.send(sender, "");
+			CivMessage.send(sender, CivColor.LightGreen+CivColor.BOLD+"Your Camp's Location: "+CivColor.LightPurple+camp.getCorner());
+			CivMessage.send(sender, "");
+			CivMessage.send(sender, "");
+		}
+	}
+	
+	public void refresh_cmd() throws CivException {
+		Resident resident = getResident();
+		if (!resident.hasCamp()) {
+			throw new CivException("You are not currently in a camp.");
+		}
+		
+		Camp camp = resident.getCamp();
+		if (camp.getOwner() != resident) {
+			throw new CivException("Only the owner of the camp can refresh it.");
+		}
+		
+		if (camp.isDestroyed()) {
+			throw new CivException("Your camp is destroyed and cannot be refreshed.");
+		}
+		try {
+			camp.repairFromTemplate();
+		} catch (IOException e) {
+		} catch (CivException e) {
+			e.printStackTrace();
+		}
+		camp.reprocessCommandSigns();
+		CivMessage.send(sender, "Repaired the camp. Check your Chests/firepit/garden, items were ejected by the refresh.");
 	}
 	
 	public void upgrade_cmd() {

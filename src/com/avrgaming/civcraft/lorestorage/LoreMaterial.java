@@ -16,7 +16,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from AVRGAMING LLC.
  */
-package com.avrgaming.civcraft.lorestorage;
+package com.civcraft.lorestorage;
 
 import gpl.AttributeUtil;
 
@@ -43,10 +43,10 @@ import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import com.avrgaming.civcraft.loreenhancements.LoreEnhancement;
-import com.avrgaming.civcraft.object.BuildableDamageBlock;
-import com.avrgaming.civcraft.util.CivColor;
-import com.avrgaming.civcraft.util.ItemManager;
+import com.civcraft.loreenhancements.LoreEnhancement;
+import com.civcraft.object.BuildableDamageBlock;
+import com.civcraft.util.CivColor;
+import com.civcraft.util.ItemManager;
 
 public abstract class LoreMaterial {
 
@@ -164,18 +164,30 @@ public abstract class LoreMaterial {
 		}
 		return null;
 	}
-
+	
 	public static ItemStack spawn(LoreMaterial material) {
-		ItemStack stack = ItemManager.createItemStack(material.getTypeID(), 1, material.getDamage());
+		return spawn(material, 1);
+	}
+	
+	public static ItemStack spawn(LoreMaterial material, int quantity) {
+		ItemStack stack = ItemManager.createItemStack(material.getTypeID(), quantity, material.getDamage());
 		AttributeUtil attrs = new AttributeUtil(stack);
 		setMIDAndName(attrs, material.getId(), material.getName());
-		
 		if (material instanceof LoreCraftableMaterial) {
 			LoreCraftableMaterial craftMat = (LoreCraftableMaterial)material;
-			//craftMat.getConfigMaterial().category
 			attrs.addLore(CivColor.ITALIC+craftMat.getConfigMaterial().category);
+			if (craftMat.getConfigMaterial().tradeableShipyard) {
+				attrs.setCivCraftProperty("tradeableShipyard", "true");
+			}
+			
+			if (craftMat.getConfigMaterial().tradeShipyardValue >= 0) {
+				attrs.setCivCraftProperty("tradeShipyardValue", ""+craftMat.getConfigMaterial().tradeShipyardValue);
+			}
+			
+			if (craftMat.getConfigMaterial().shiny) {
+				attrs.setShiny();
+			}
 		}
-		
 		material.applyAttributes(attrs);
 		return attrs.getStack();
 	}

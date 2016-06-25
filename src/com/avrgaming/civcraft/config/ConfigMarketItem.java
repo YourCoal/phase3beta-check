@@ -16,7 +16,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from AVRGAMING LLC.
  */
-package com.avrgaming.civcraft.config;
+package com.civcraft.config;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -30,15 +30,15 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import com.avrgaming.civcraft.database.SQL;
-import com.avrgaming.civcraft.exception.CivException;
-import com.avrgaming.civcraft.exception.InvalidConfiguration;
-import com.avrgaming.civcraft.lorestorage.LoreMaterial;
-import com.avrgaming.civcraft.main.CivLog;
-import com.avrgaming.civcraft.main.CivMessage;
-import com.avrgaming.civcraft.object.Resident;
-import com.avrgaming.civcraft.threading.TaskMaster;
-import com.avrgaming.civcraft.util.MultiInventory;
+import com.civcraft.database.SQL;
+import com.civcraft.exception.CivException;
+import com.civcraft.exception.InvalidConfiguration;
+import com.civcraft.lorestorage.LoreMaterial;
+import com.civcraft.main.CivLog;
+import com.civcraft.main.CivMessage;
+import com.civcraft.object.Resident;
+import com.civcraft.threading.TaskMaster;
+import com.civcraft.util.MultiInventory;
 
 public class ConfigMarketItem {
 	public int id;
@@ -183,7 +183,6 @@ public class ConfigMarketItem {
 				if(buy_value == sell_value) {
 					buy_value++;
 				}
-				
 				this.saveItemNow();
 			}
 			
@@ -351,7 +350,6 @@ public class ConfigMarketItem {
 				buy_value++;
 			}
 			//buy_value += STEP;
-			//sell_value = buy_value - (PRICE_DIFF*2);
 			buysell_count = 0;
 			this.lastaction = LastAction.BUY;
 		}
@@ -386,5 +384,4 @@ public class ConfigMarketItem {
 	public boolean isStackable() {
 		return this.stackable;
 	}
-
 }

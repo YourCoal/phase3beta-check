@@ -1,34 +1,16 @@
-/*************************************************************************
- * 
- * AVRGAMING LLC
- * __________________
- * 
- *  [2013] AVRGAMING LLC
- *  All Rights Reserved.
- * 
- * NOTICE:  All information contained herein is, and remains
- * the property of AVRGAMING LLC and its suppliers,
- * if any.  The intellectual and technical concepts contained
- * herein are proprietary to AVRGAMING LLC
- * and its suppliers and may be covered by U.S. and Foreign Patents,
- * patents in process, and are protected by trade secret or copyright law.
- * Dissemination of this information or reproduction of this material
- * is strictly forbidden unless prior written permission is obtained
- * from AVRGAMING LLC.
- */
-package com.avrgaming.civcraft.command;
+package com.civcraft.command;
 
 import java.sql.SQLException;
 
 import org.bukkit.entity.Player;
 
-import com.avrgaming.civcraft.config.CivSettings;
-import com.avrgaming.civcraft.exception.CivException;
-import com.avrgaming.civcraft.main.CivGlobal;
-import com.avrgaming.civcraft.main.CivMessage;
-import com.avrgaming.civcraft.object.Civilization;
-import com.avrgaming.civcraft.object.Resident;
-import com.avrgaming.civcraft.object.Town;
+import com.civcraft.config.CivSettings;
+import com.civcraft.exception.CivException;
+import com.civcraft.main.CivGlobal;
+import com.civcraft.main.CivMessage;
+import com.civcraft.object.Civilization;
+import com.civcraft.object.Resident;
+import com.civcraft.object.Town;
 
 public class EconCommand extends CommandBase {
 
@@ -38,8 +20,9 @@ public class EconCommand extends CommandBase {
 		displayName = "Econ";
 		
 		commands.put("add", "[player] [amount] - add money to this player");
+		commands.put("sub", "[player] [amount] - remove money for this player");
 		commands.put("set", "[player] [amount] - set money for this player");
-		commands.put("sub", "[player] [amount] - subtract money for this player");
+		commands.put("give", "[player] [amount] - give money to this player");
 		
 		commands.put("addtown", "[town] [amount] - add money to this town");
 		commands.put("settown", "[town] [amount] - set money for this town");
@@ -55,6 +38,22 @@ public class EconCommand extends CommandBase {
 		
 		commands.put("clearalldebt", "Clears all debt for everyone in the server. Residents, Towns, Civs");
 		
+	}
+	
+	public void give_cmd() throws CivException {
+		validEcon();
+		if (args.length < 3) {
+			throw new CivException("Provide a name and a amount");
+		}
+		
+		Resident resident = getNamedResident(1);
+		try {
+			Double amount = Double.valueOf(args[2]);
+			resident.getTreasury().deposit(amount);
+			CivMessage.sendSuccess(sender, "Added "+args[2]+" to "+args[1]);			
+		} catch (NumberFormatException e) {
+			throw new CivException(args[2]+" is not a number.");
+		}
 	}
 	
 	public void clearalldebt_cmd() throws CivException {
@@ -125,9 +124,18 @@ public class EconCommand extends CommandBase {
 	}
 	
 	private void validEcon() throws CivException {
-		if (!getPlayer().isOp() || !getPlayer().hasPermission(CivSettings.ECON)) {
-			throw new CivException("You must be OP to use this command.");
-		}		
+//		if (!getPlayer().isOp() || !getPlayer().hasPermission(CivSettings.ECON)) {
+//			throw new CivException("You must be OP to use this command.");
+//		}
+		if (sender instanceof Player) {
+			if (((Player)sender).hasPermission(CivSettings.ECON)) {
+				return;
+			}
+		}
+		
+		if (sender.isOp() == false) {
+			throw new CivException("Only admins can use this command.");			
+		}
 	}
 	
 	public void add_cmd() throws CivException {
@@ -144,6 +152,7 @@ public class EconCommand extends CommandBase {
 			Double amount = Double.valueOf(args[2]);
 			resident.getTreasury().deposit(amount);
 			CivMessage.sendSuccess(sender, "Added "+args[2]+" to "+args[1]);
+			CivMessage.sendSuccess(resident, "An admin gave you "+args[2]+" coins!");
 			
 		} catch (NumberFormatException e) {
 			throw new CivException(args[2]+" is not a number.");
@@ -336,14 +345,11 @@ public class EconCommand extends CommandBase {
 		if (!player.isOp() && !player.hasPermission(CivSettings.ECON)) {
 			return;
 		}
-		
 		showBasicHelp();
-		
 	}
 
 	@Override
 	public void permissionCheck() throws CivException {
 		
 	}
-
 }

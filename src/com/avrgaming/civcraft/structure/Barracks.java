@@ -1,22 +1,4 @@
-/*************************************************************************
- * 
- * AVRGAMING LLC
- * __________________
- * 
- *  [2013] AVRGAMING LLC
- *  All Rights Reserved.
- * 
- * NOTICE:  All information contained herein is, and remains
- * the property of AVRGAMING LLC and its suppliers,
- * if any.  The intellectual and technical concepts contained
- * herein are proprietary to AVRGAMING LLC
- * and its suppliers and may be covered by U.S. and Foreign Patents,
- * patents in process, and are protected by trade secret or copyright law.
- * Dissemination of this information or reproduction of this material
- * is strictly forbidden unless prior written permission is obtained
- * from AVRGAMING LLC.
- */
-package com.avrgaming.civcraft.structure;
+package com.civcraft.structure;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -35,27 +17,27 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import com.avrgaming.civcraft.config.CivSettings;
-import com.avrgaming.civcraft.config.ConfigUnit;
-import com.avrgaming.civcraft.exception.CivException;
-import com.avrgaming.civcraft.exception.InvalidConfiguration;
-import com.avrgaming.civcraft.interactive.InteractiveRepairItem;
-import com.avrgaming.civcraft.items.components.RepairCost;
-import com.avrgaming.civcraft.lorestorage.LoreCraftableMaterial;
-import com.avrgaming.civcraft.main.CivGlobal;
-import com.avrgaming.civcraft.main.CivLog;
-import com.avrgaming.civcraft.main.CivMessage;
-import com.avrgaming.civcraft.object.Resident;
-import com.avrgaming.civcraft.object.StructureChest;
-import com.avrgaming.civcraft.object.StructureSign;
-import com.avrgaming.civcraft.object.Town;
-import com.avrgaming.civcraft.sessiondb.SessionEntry;
-import com.avrgaming.civcraft.threading.TaskMaster;
-import com.avrgaming.civcraft.threading.tasks.UnitSaveAsyncTask;
-import com.avrgaming.civcraft.util.BlockCoord;
-import com.avrgaming.civcraft.util.CivColor;
-import com.avrgaming.civcraft.util.ItemManager;
-import com.avrgaming.civcraft.util.SimpleBlock;
+import com.civcraft.config.CivSettings;
+import com.civcraft.config.ConfigUnit;
+import com.civcraft.exception.CivException;
+import com.civcraft.exception.InvalidConfiguration;
+import com.civcraft.interactive.InteractiveRepairItem;
+import com.civcraft.items.components.RepairCost;
+import com.civcraft.lorestorage.LoreCraftableMaterial;
+import com.civcraft.main.CivGlobal;
+import com.civcraft.main.CivLog;
+import com.civcraft.main.CivMessage;
+import com.civcraft.object.Resident;
+import com.civcraft.object.StructureChest;
+import com.civcraft.object.StructureSign;
+import com.civcraft.object.Town;
+import com.civcraft.sessiondb.SessionEntry;
+import com.civcraft.threading.TaskMaster;
+import com.civcraft.threading.tasks.UnitSaveAsyncTask;
+import com.civcraft.util.BlockCoord;
+import com.civcraft.util.CivColor;
+import com.civcraft.util.ItemManager;
+import com.civcraft.util.SimpleBlock;
 
 public class Barracks extends Structure {
 
@@ -81,17 +63,15 @@ public class Barracks extends Structure {
 
 	private String getUnitSignText(int index) throws IndexOutOfBoundsException {
 		ArrayList<ConfigUnit> unitList = getTown().getAvailableUnits();
-		
 		if (unitList.size() == 0) {
 			return "\n"+CivColor.LightGray+"None\n"+CivColor.LightGray+"Available";			
 		}
 		
 		ConfigUnit unit = unitList.get(index);
 		String out = "\n";
-		out += CivColor.LightPurple+unit.name+"\n";
-		out += CivColor.Yellow+unit.cost+"\n";
-		out += CivColor.Yellow+"coins";
-		
+		out += CivColor.Purple+unit.name+"\n";
+		out += CivColor.Gold+unit.cost+"\n";
+		out += CivColor.Gold+"coins";
 		return out;
 	}
 	
@@ -110,10 +90,8 @@ public class Barracks extends Structure {
 		}
 	}
 	
-	
 	private void train(Resident whoClicked) throws CivException {
 		ArrayList<ConfigUnit> unitList = getTown().getAvailableUnits();
-
 		ConfigUnit unit = unitList.get(index);
 		if (unit == null) {
 			throw new CivException("Unknown unit type.");
@@ -136,15 +114,12 @@ public class Barracks extends Structure {
 		}
 		
 		if (unit.id.equals("u_settler")) {
-			if (!this.getCiv().getLeaderGroup().hasMember(whoClicked) && !this.getCiv().getAdviserGroup().hasMember(whoClicked)) {
-				throw new CivException("You must be an adivser to the civilization in order to build a Settler.");
+			if (!this.getCiv().getLeaderGroup().hasMember(whoClicked) && !this.getCiv().getDipAdviserGroup().hasMember(whoClicked)) {
+				throw new CivException("You must be a leader or diplomatic to the civilization in order to build a Settler.");
 			}
 		}
 		
-		
 		getTown().getTreasury().withdraw(unit.cost);
-		
-		
 		this.setCurrentHammers(0.0);
 		this.setTrainingUnit(unit);
 		CivMessage.sendTown(getTown(), "We've begun training a "+unit.name+"!");
@@ -228,9 +203,6 @@ public class Barracks extends Structure {
 				e.printStackTrace();
 				throw new CivException("Internal configuration error");
 			}
-			
-			
-			
 		} catch (CivException e) {
 			CivMessage.sendError(player, e.getMessage());
 			event.setCancelled(true);

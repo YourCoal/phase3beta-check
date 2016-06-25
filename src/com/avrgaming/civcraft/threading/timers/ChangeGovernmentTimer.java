@@ -16,15 +16,15 @@
  * is strictly forbidden unless prior written permission is obtained
  * from AVRGAMING LLC.
  */
-package com.avrgaming.civcraft.threading.timers;
+package com.civcraft.threading.timers;
 
 import java.util.ArrayList;
 
-import com.avrgaming.civcraft.config.CivSettings;
-import com.avrgaming.civcraft.main.CivGlobal;
-import com.avrgaming.civcraft.main.CivMessage;
-import com.avrgaming.civcraft.object.Civilization;
-import com.avrgaming.civcraft.sessiondb.SessionEntry;
+import com.civcraft.config.CivSettings;
+import com.civcraft.main.CivGlobal;
+import com.civcraft.main.CivMessage;
+import com.civcraft.object.Civilization;
+import com.civcraft.sessiondb.SessionEntry;
 
 public class ChangeGovernmentTimer implements Runnable {
 
@@ -53,7 +53,6 @@ public class ChangeGovernmentTimer implements Runnable {
 				}
 			
 				if (CivGlobal.hasTimeElapsed(se, (Integer)CivSettings.getIntegerGovernment("anarchy_duration")*duration)) {
-
 					civ.setGovernment(se.value);
 					CivMessage.global(civ.getName()+" has emerged from anarchy and has adopted "+CivSettings.governments.get(se.value).displayName);
 					
@@ -63,5 +62,4 @@ public class ChangeGovernmentTimer implements Runnable {
 			}
 		}		
 	}
-
 }

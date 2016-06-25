@@ -16,12 +16,14 @@
  * is strictly forbidden unless prior written permission is obtained
  * from AVRGAMING LLC.
  */
-package com.avrgaming.civcraft.listener;
+package com.civcraft.listener;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Chest;
 import org.bukkit.entity.Arrow;
@@ -57,31 +59,31 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
-import com.avrgaming.civcraft.config.CivSettings;
-import com.avrgaming.civcraft.config.ConfigTechPotion;
-import com.avrgaming.civcraft.items.units.Unit;
-import com.avrgaming.civcraft.items.units.UnitItemMaterial;
-import com.avrgaming.civcraft.items.units.UnitMaterial;
-import com.avrgaming.civcraft.lorestorage.LoreMaterial;
-import com.avrgaming.civcraft.main.CivData;
-import com.avrgaming.civcraft.main.CivGlobal;
-import com.avrgaming.civcraft.main.CivLog;
-import com.avrgaming.civcraft.main.CivMessage;
-import com.avrgaming.civcraft.mobs.timers.MobSpawnerTimer;
-import com.avrgaming.civcraft.object.CultureChunk;
-import com.avrgaming.civcraft.object.Resident;
-import com.avrgaming.civcraft.road.Road;
-import com.avrgaming.civcraft.structure.Capitol;
-import com.avrgaming.civcraft.threading.TaskMaster;
-import com.avrgaming.civcraft.threading.tasks.PlayerChunkNotifyAsyncTask;
-import com.avrgaming.civcraft.threading.tasks.PlayerLoginAsyncTask;
-import com.avrgaming.civcraft.threading.timers.PlayerLocationCacheUpdate;
-import com.avrgaming.civcraft.util.BlockCoord;
-import com.avrgaming.civcraft.util.ChunkCoord;
-import com.avrgaming.civcraft.util.CivColor;
-import com.avrgaming.civcraft.util.ItemManager;
-import com.avrgaming.civcraft.war.War;
-import com.avrgaming.civcraft.war.WarStats;
+import com.civcraft.config.CivSettings;
+import com.civcraft.config.ConfigTechPotion;
+import com.civcraft.exception.CivException;
+import com.civcraft.items.units.UnitItemMaterial;
+import com.civcraft.items.units.UnitMaterial;
+import com.civcraft.lorestorage.LoreMaterial;
+import com.civcraft.main.CivData;
+import com.civcraft.main.CivGlobal;
+import com.civcraft.main.CivLog;
+import com.civcraft.main.CivMessage;
+import com.civcraft.mobs.timers.MobSpawnerTimer;
+import com.civcraft.object.CultureChunk;
+import com.civcraft.object.Resident;
+import com.civcraft.road.Road;
+import com.civcraft.structure.Capitol;
+import com.civcraft.threading.TaskMaster;
+import com.civcraft.threading.tasks.PlayerChunkNotifyAsyncTask;
+import com.civcraft.threading.tasks.PlayerLoginAsyncTask;
+import com.civcraft.threading.timers.PlayerLocationCacheUpdate;
+import com.civcraft.util.BlockCoord;
+import com.civcraft.util.ChunkCoord;
+import com.civcraft.util.CivColor;
+import com.civcraft.util.ItemManager;
+import com.civcraft.war.War;
+import com.civcraft.war.WarStats;
 
 public class PlayerListener implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR)
@@ -123,44 +125,10 @@ public class PlayerListener implements Listener {
 					" from:"+event.getFrom().getBlockX()+","+event.getFrom().getBlockY()+","+event.getFrom().getBlockZ());
 		}
 	}
-		
+	
 	private void setModifiedMovementSpeed(Player player) {
 		/* Change move speed based on armor. */
 		double speed = CivSettings.normal_speed;
-		
-		/* Set speed from armor. */
-		if (Unit.isWearingFullComposite(player)) {
-			speed *= CivSettings.T4_leather_speed;
-		}
-		
-		if (Unit.isWearingFullHardened(player)) {
-			speed *= CivSettings.T3_leather_speed;
-		}
-		
-		if (Unit.isWearingFullRefined(player)) {
-			speed *= CivSettings.T2_leather_speed;
-		}
-		
-		if (Unit.isWearingFullBasicLeather(player)) {
-			speed *= CivSettings.T1_leather_speed;
-		}
-		
-		if (Unit.isWearingAnyIron(player)) {
-			speed *= CivSettings.T1_metal_speed;
-		}
-		
-		if (Unit.isWearingAnyChain(player)) {
-			speed *= CivSettings.T2_metal_speed;
-		}
-		
-		if (Unit.isWearingAnyGold(player)) {
-			speed *= CivSettings.T3_metal_speed;
-		}
-		
-		if (Unit.isWearingAnyDiamond(player)) {
-			speed *= CivSettings.T4_metal_speed;
-		}
-		
 		Resident resident = CivGlobal.getResident(player);
 		if (resident != null && resident.isOnRoad()) {	
 			if (player.getVehicle() != null && player.getVehicle().getType().equals(EntityType.HORSE)) {
@@ -181,9 +149,7 @@ public class PlayerListener implements Listener {
 	
 	@EventHandler(priority = EventPriority.LOW)
 	public void onPlayerMove(PlayerMoveEvent event) {
-		/*
-		 * Abort if we havn't really moved
-		 */
+		/* Abort if we havn't really moved */
 		if (event.getFrom().getBlockX() == event.getTo().getBlockX() && 
 			event.getFrom().getBlockZ() == event.getTo().getBlockZ() && 
 			event.getFrom().getBlockY() == event.getTo().getBlockY()) {
@@ -207,33 +173,37 @@ public class PlayerListener implements Listener {
 
 	}
 	
+	UUID playerUUID;
+	public void PlayerLoginAsyncTask(UUID playerUUID) {
+		this.playerUUID = playerUUID;
+	}
+	public Player getPlayer() throws CivException {
+		Player player = Bukkit.getPlayer(playerUUID);
+		if (player == null) {
+			throw new CivException("Player offline now. May have been kicked.");
+		}
+		return player;
+	}
+	
 	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onPlayerRespawn(PlayerRespawnEvent event) {
-		
+	public void onPlayerRespawn(PlayerRespawnEvent event) throws CivException {
 		Player player = event.getPlayer();
 		Resident resident = CivGlobal.getResident(player);
 		if (resident == null || !resident.hasTown()) {
 			return;
 		}
 		
-		if (War.isWarTime() && !resident.isInsideArena()) {
-			if (resident.getTown().getCiv().getDiplomacyManager().isAtWar()) {
-				//TownHall townhall = resident.getTown().getTownHall();
-				Capitol capitol = resident.getCiv().getCapitolStructure();
-				if (capitol != null) {
-					BlockCoord respawn = capitol.getRandomRespawnPoint();
-					if (respawn != null) {
-						//PlayerReviveTask reviveTask = new PlayerReviveTask(player, townhall.getRespawnTime(), townhall, event.getRespawnLocation());
-						resident.setLastKilledTime(new Date());
-						event.setRespawnLocation(respawn.getCenteredLocation());
-						CivMessage.send(player, CivColor.LightGray+"You've respawned in the War Room since it's WarTime and you're at war.");
-						
-						//TaskMaster.asyncTask("", reviveTask, 0);
-					}
+		if (resident.getTown().getCiv().getDiplomacyManager().isAtWar() && War.isWarTime()) {
+			Capitol capitol = resident.getCiv().getCapitolStructure();
+			if (capitol != null) {
+				BlockCoord respawn = capitol.getRandomRespawnPoint();
+				if (respawn != null) {
+					resident.setLastKilledTime(new Date());
+					event.setRespawnLocation(respawn.getCenteredLocation());
+					CivMessage.send(player, CivColor.LightGray+"You've respawned in the War Room since it's WarTime and you're at war.");
 				}
 			}
 		}
-		
 	}
 	
 	@EventHandler(priority = EventPriority.MONITOR)
@@ -244,7 +214,8 @@ public class PlayerListener implements Listener {
 				resident.previewUndo.clear();
 			}
 			resident.clearInteractiveMode();
-		}		
+		}
+		MobSpawnerTimer.playerQueue.remove((event.getPlayer().getName()));
 	}
 	
 	@EventHandler(priority = EventPriority.MONITOR)
@@ -541,9 +512,5 @@ public class PlayerListener implements Listener {
 				}
 			}
 		}
-		
-		
-		
-		
 	}
 }

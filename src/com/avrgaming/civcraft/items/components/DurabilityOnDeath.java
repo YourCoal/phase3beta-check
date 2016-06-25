@@ -16,14 +16,14 @@
  * is strictly forbidden unless prior written permission is obtained
  * from AVRGAMING LLC.
  */
-package com.avrgaming.civcraft.items.components;
+package com.civcraft.items.components;
 
 import gpl.AttributeUtil;
 
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
 
-import com.avrgaming.civcraft.lorestorage.ItemChangeResult;
+import com.civcraft.lorestorage.ItemChangeResult;
 
 public class DurabilityOnDeath extends ItemComponent {
 

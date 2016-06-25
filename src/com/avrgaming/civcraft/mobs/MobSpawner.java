@@ -1,14 +1,15 @@
-package com.avrgaming.civcraft.mobs;
+package com.civcraft.mobs;
 
 import java.util.LinkedList;
 import java.util.Random;
 
+import moblib.mob.ICustomMob;
+import moblib.moblib.MobLib;
+
 import org.bukkit.Location;
 
-import com.avrgaming.civcraft.exception.CivException;
-import com.avrgaming.civcraft.util.CivColor;
-import com.avrgaming.mob.ICustomMob;
-import com.avrgaming.moblib.MobLib;
+import com.civcraft.exception.CivException;
+import com.civcraft.util.CivColor;
 
 public class MobSpawner {
 
@@ -31,12 +32,12 @@ public class MobSpawner {
 	} 
 		
 	public static enum CustomMobType {
-		YOBO("Yobo", "com.avrgaming.civcraft.mobs.Yobo"),
-		YOBOBOSS("Yobo Boss", "com.avrgaming.civcraft.mobs.YoboBoss"),
-		RUFFIAN("Ruffian", "com.avrgaming.civcraft.mobs.Ruffian"),
-		BEHEMOTH("Behemoth", "com.avrgaming.civcraft.mobs.Behemoth"),
-		SAVAGE("Cannibal", "com.avrgaming.civcraft.mobs.Savage"),
-		ANGRYYOBO("Angry Yobo", "com.avrgaming.civcraft.mobs.AngryYobo");
+		YOBO("Yobo", "com.civcraft.mobs.Yobo"),
+		YOBOBOSS("Yobo Boss", "com.civcraft.mobs.YoboBoss"),
+		RUFFIAN("Ruffian", "com.civcraft.mobs.Ruffian"),
+		BEHEMOTH("Behemoth", "com.civcraft.mobs.Behemoth"),
+		SAVAGE("Cannibal", "com.civcraft.mobs.Savage"),
+		ANGRYYOBO("Angry Yobo", "com.civcraft.mobs.AngryYobo");
 		
 		private String name;
 		private String className; 
@@ -52,6 +53,10 @@ public class MobSpawner {
 		
 		public String getClassName() {
 			return className;
+		}
+
+		public boolean equalsIgnoreCase(String string) {
+			return false;
 		}
 	}
 	
@@ -112,6 +117,4 @@ public class MobSpawner {
 			e.printStackTrace();
 		}
 	}
-	
-	
 }

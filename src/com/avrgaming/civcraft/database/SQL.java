@@ -16,7 +16,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from AVRGAMING LLC.
  */
-package com.avrgaming.civcraft.database;
+package com.civcraft.database;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -28,40 +28,38 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import com.avrgaming.civcraft.arena.ArenaTeam;
-import com.avrgaming.civcraft.camp.Camp;
-import com.avrgaming.civcraft.config.CivSettings;
-import com.avrgaming.civcraft.config.ConfigMarketItem;
-import com.avrgaming.civcraft.event.EventTimer;
-import com.avrgaming.civcraft.exception.CivException;
-import com.avrgaming.civcraft.exception.InvalidConfiguration;
-import com.avrgaming.civcraft.items.BonusGoodie;
-import com.avrgaming.civcraft.main.CivGlobal;
-import com.avrgaming.civcraft.main.CivLog;
-import com.avrgaming.civcraft.object.Civilization;
-import com.avrgaming.civcraft.object.MissionLogger;
-import com.avrgaming.civcraft.object.NamedObject;
-import com.avrgaming.civcraft.object.ProtectedBlock;
-import com.avrgaming.civcraft.object.Relation;
-import com.avrgaming.civcraft.object.Resident;
-import com.avrgaming.civcraft.object.SQLObject;
-import com.avrgaming.civcraft.object.Town;
-import com.avrgaming.civcraft.object.TownChunk;
-import com.avrgaming.civcraft.object.TradeGood;
-import com.avrgaming.civcraft.object.WallBlock;
-import com.avrgaming.civcraft.permission.PermissionGroup;
-import com.avrgaming.civcraft.randomevents.RandomEvent;
-import com.avrgaming.civcraft.road.RoadBlock;
-import com.avrgaming.civcraft.sessiondb.SessionDatabase;
-import com.avrgaming.civcraft.structure.Structure;
-import com.avrgaming.civcraft.structure.wonders.Wonder;
-import com.avrgaming.civcraft.threading.TaskMaster;
-import com.avrgaming.civcraft.util.BiomeCache;
-import com.avrgaming.global.perks.PerkManager;
-import com.avrgaming.global.perks.PerkManagerSimple;
-import com.avrgaming.global.perks.PlatinumManager;
-import com.avrgaming.global.reports.ReportManager;
-import com.avrgaming.global.scores.ScoreManager;
+import com.civcraft.camp.Camp;
+import com.civcraft.config.CivSettings;
+import com.civcraft.config.ConfigMarketItem;
+import com.civcraft.event.EventTimer;
+import com.civcraft.exception.CivException;
+import com.civcraft.exception.InvalidConfiguration;
+import com.civcraft.items.BonusGoodie;
+import com.civcraft.main.CivGlobal;
+import com.civcraft.main.CivLog;
+import com.civcraft.object.Civilization;
+import com.civcraft.object.MissionLogger;
+import com.civcraft.object.NamedObject;
+import com.civcraft.object.ProtectedBlock;
+import com.civcraft.object.Relation;
+import com.civcraft.object.Resident;
+import com.civcraft.object.SQLObject;
+import com.civcraft.object.Town;
+import com.civcraft.object.TownChunk;
+import com.civcraft.object.TradeGood;
+import com.civcraft.object.WallBlock;
+import com.civcraft.permission.PermissionGroup;
+import com.civcraft.randomevents.RandomEvent;
+import com.civcraft.road.RoadBlock;
+import com.civcraft.sessiondb.SessionDatabase;
+import com.civcraft.structure.Structure;
+import com.civcraft.structure.wonders.Wonder;
+import com.civcraft.threading.TaskMaster;
+import com.civcraft.util.BiomeCache;
+import com.global.perks.PerkManager;
+import com.global.perks.PerkManagerSimple;
+import com.global.perks.PlatinumManager;
+import com.global.scores.ScoreManager;
 import com.jolbox.bonecp.Statistics;
 
 public class SQL {
@@ -177,10 +175,8 @@ public class SQL {
 		Camp.init();
 		ConfigMarketItem.init();
 		RandomEvent.init();
-		ArenaTeam.init();
 					
 		CivLog.heading("Building Global Tables!!");
-		ReportManager.init();
 		ScoreManager.init();
 		
 		CivLog.info("----- Done Building Tables ----");
@@ -563,6 +559,23 @@ public class SQL {
 			SQL.close(null, ps, context);
 		}
 	}
+	
+	//XXX Added for resetting market
+	public static void delete(String tablename) throws SQLException {
+		Connection context = null;
+		PreparedStatement ps = null;
+		
+		try {
+			String sql = "DELETE FROM " + SQL.tb_prefix + tablename + " WHERE `name` = ?";
+			context = SQL.getGameConnection();		
+			ps = context.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			ps.execute();
+			ps.close();
+		} finally {
+			SQL.close(null, ps, context);
+		}
+	}
+	
 	public static void makeCol(String colname, String type, String TABLE_NAME) throws SQLException {
 		if (!SQL.hasColumn(TABLE_NAME, colname)) {
 			CivLog.info("\tCouldn't find "+colname+" column for "+TABLE_NAME);
@@ -622,5 +635,4 @@ public class SQL {
 			}
 		}
 	}
-	
 }

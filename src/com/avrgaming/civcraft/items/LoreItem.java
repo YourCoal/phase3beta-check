@@ -16,14 +16,14 @@
  * is strictly forbidden unless prior written permission is obtained
  * from AVRGAMING LLC.
  */
-package com.avrgaming.civcraft.items;
+package com.civcraft.items;
 
 import java.util.List;
 
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import com.avrgaming.civcraft.object.SQLObject;
+import com.civcraft.object.SQLObject;
 
 public abstract class LoreItem extends SQLObject {
 	/* 

@@ -16,7 +16,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from AVRGAMING LLC.
  */
-package com.avrgaming.civcraft.config;
+package com.civcraft.config;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,8 +26,8 @@ import java.util.Map;
 
 import org.bukkit.configuration.file.FileConfiguration;
 
-import com.avrgaming.civcraft.main.CivLog;
-import com.avrgaming.civcraft.object.Town;
+import com.civcraft.main.CivLog;
+import com.civcraft.object.Town;
 
 public class ConfigBuildableInfo {
 	public String id = "";
@@ -73,7 +73,11 @@ public class ConfigBuildableInfo {
 						if (id.equals("s_capitol") && !capitol) {
 							return false;
 						}
-						
+						if (id.equals("w_colosseum")) {
+							if (!capitol || town.hasStructure(id)) {
+								return false;
+							}
+						}
 						return true;
 					}
 				}

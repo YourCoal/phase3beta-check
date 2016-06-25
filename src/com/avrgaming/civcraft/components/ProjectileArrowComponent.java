@@ -16,21 +16,21 @@
  * is strictly forbidden unless prior written permission is obtained
  * from AVRGAMING LLC.
  */
-package com.avrgaming.civcraft.components;
+package com.civcraft.components;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.util.Vector;
 
-import com.avrgaming.civcraft.cache.ArrowFiredCache;
-import com.avrgaming.civcraft.cache.CivCache;
-import com.avrgaming.civcraft.config.CivSettings;
-import com.avrgaming.civcraft.exception.InvalidConfiguration;
-import com.avrgaming.civcraft.object.Buff;
-import com.avrgaming.civcraft.object.Town;
-import com.avrgaming.civcraft.structure.Buildable;
-import com.avrgaming.civcraft.util.BlockCoord;
+import com.civcraft.cache.ArrowFiredCache;
+import com.civcraft.cache.CivCache;
+import com.civcraft.config.CivSettings;
+import com.civcraft.exception.InvalidConfiguration;
+import com.civcraft.object.Buff;
+import com.civcraft.object.Town;
+import com.civcraft.structure.Buildable;
+import com.civcraft.util.BlockCoord;
 
 public class ProjectileArrowComponent extends ProjectileComponent {
 	

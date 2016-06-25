@@ -1,4 +1,4 @@
-package com.avrgaming.global.reports;
+package com.global.reports;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -7,9 +7,9 @@ import java.util.Date;
 
 import org.bukkit.Bukkit;
 
-import com.avrgaming.civcraft.database.SQL;
-import com.avrgaming.civcraft.main.CivLog;
-import com.avrgaming.civcraft.threading.TaskMaster;
+import com.civcraft.database.SQL;
+import com.civcraft.main.CivLog;
+import com.civcraft.threading.TaskMaster;
 
 public class ReportManager {
 	

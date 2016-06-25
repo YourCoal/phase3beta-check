@@ -1,4 +1,4 @@
-package com.avrgaming.civcraft.endgame;
+package com.civcraft.endgame;
 
 import java.util.HashMap;
 import java.util.List;
@@ -7,7 +7,7 @@ import java.util.Map.Entry;
 
 import org.bukkit.configuration.file.FileConfiguration;
 
-import com.avrgaming.civcraft.main.CivLog;
+import com.civcraft.main.CivLog;
 
 public class ConfigEndCondition {
 	public String id;

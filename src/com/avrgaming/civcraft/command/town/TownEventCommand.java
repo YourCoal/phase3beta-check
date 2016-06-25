@@ -1,13 +1,13 @@
-package com.avrgaming.civcraft.command.town;
+package com.civcraft.command.town;
 
 import java.text.SimpleDateFormat;
 
-import com.avrgaming.civcraft.command.CommandBase;
-import com.avrgaming.civcraft.exception.CivException;
-import com.avrgaming.civcraft.main.CivMessage;
-import com.avrgaming.civcraft.object.Town;
-import com.avrgaming.civcraft.randomevents.RandomEvent;
-import com.avrgaming.civcraft.util.CivColor;
+import com.civcraft.command.CommandBase;
+import com.civcraft.exception.CivException;
+import com.civcraft.main.CivMessage;
+import com.civcraft.object.Town;
+import com.civcraft.randomevents.RandomEvent;
+import com.civcraft.util.CivColor;
 
 public class TownEventCommand extends CommandBase {
 

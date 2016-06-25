@@ -1,12 +1,12 @@
-package com.avrgaming.civcraft.endgame;
+package com.civcraft.endgame;
 
 import java.util.ArrayList;
 
-import com.avrgaming.civcraft.main.CivGlobal;
-import com.avrgaming.civcraft.main.CivMessage;
-import com.avrgaming.civcraft.object.Civilization;
-import com.avrgaming.civcraft.sessiondb.SessionEntry;
-import com.avrgaming.civcraft.util.CivColor;
+import com.civcraft.main.CivGlobal;
+import com.civcraft.main.CivMessage;
+import com.civcraft.object.Civilization;
+import com.civcraft.sessiondb.SessionEntry;
+import com.civcraft.util.CivColor;
 
 public class EndConditionNotificationTask implements Runnable {
 

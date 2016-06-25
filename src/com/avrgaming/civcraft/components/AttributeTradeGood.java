@@ -1,10 +1,10 @@
-package com.avrgaming.civcraft.components;
+package com.civcraft.components;
 
 import java.util.HashSet;
 
-import com.avrgaming.civcraft.items.BonusGoodie;
-import com.avrgaming.civcraft.object.Town;
-import com.avrgaming.civcraft.structure.Buildable;
+import com.civcraft.items.BonusGoodie;
+import com.civcraft.object.Town;
+import com.civcraft.structure.Buildable;
 
 public class AttributeTradeGood extends AttributeBase {
 	

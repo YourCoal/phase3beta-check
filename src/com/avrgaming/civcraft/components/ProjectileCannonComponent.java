@@ -16,7 +16,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from AVRGAMING LLC.
  */
-package com.avrgaming.civcraft.components;
+package com.civcraft.components;
 
 import java.util.Random;
 
@@ -24,12 +24,12 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 
-import com.avrgaming.civcraft.cache.CannonExplosionProjectile;
-import com.avrgaming.civcraft.config.CivSettings;
-import com.avrgaming.civcraft.exception.InvalidConfiguration;
-import com.avrgaming.civcraft.structure.Buildable;
-import com.avrgaming.civcraft.threading.TaskMaster;
-import com.avrgaming.civcraft.util.BlockCoord;
+import com.civcraft.cache.CannonExplosionProjectile;
+import com.civcraft.config.CivSettings;
+import com.civcraft.exception.InvalidConfiguration;
+import com.civcraft.structure.Buildable;
+import com.civcraft.threading.TaskMaster;
+import com.civcraft.util.BlockCoord;
 
 public class ProjectileCannonComponent extends ProjectileComponent {
 	

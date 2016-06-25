@@ -16,21 +16,22 @@
  * is strictly forbidden unless prior written permission is obtained
  * from AVRGAMING LLC.
  */
-package com.avrgaming.civcraft.command.town;
+package com.civcraft.command.town;
 
 import java.sql.SQLException;
 
 import org.bukkit.entity.Player;
 
-import com.avrgaming.civcraft.command.CommandBase;
-import com.avrgaming.civcraft.exception.CivException;
-import com.avrgaming.civcraft.exception.InvalidNameException;
-import com.avrgaming.civcraft.main.CivGlobal;
-import com.avrgaming.civcraft.main.CivMessage;
-import com.avrgaming.civcraft.object.Resident;
-import com.avrgaming.civcraft.object.Town;
-import com.avrgaming.civcraft.permission.PermissionGroup;
-import com.avrgaming.civcraft.util.CivColor;
+import com.civcraft.command.CommandBase;
+import com.civcraft.exception.CivException;
+import com.civcraft.exception.InvalidNameException;
+import com.civcraft.main.CivGlobal;
+import com.civcraft.main.CivMessage;
+import com.civcraft.object.Civilization;
+import com.civcraft.object.Resident;
+import com.civcraft.object.Town;
+import com.civcraft.permission.PermissionGroup;
+import com.civcraft.util.CivColor;
 
 public class TownGroupCommand extends CommandBase {
 
@@ -100,15 +101,17 @@ public class TownGroupCommand extends CommandBase {
 	}
 	
 	public void remove_cmd() throws CivException {
+		Civilization civ = getSenderCiv();
 		Town town = getSelectedTown();
 		Resident commandSenderResidnet = getResident();
+		Resident resident = getResident();
 		Resident oldMember = getNamedResident(1);
 		PermissionGroup grp = getNamedPermissionGroup(town, 2);
 				
-		if (grp == town.getMayorGroup()) {
+		if (grp == town.getMayorGroup() && !civ.getLeaderGroup().hasMember(resident)) {
 			if(!grp.hasMember(commandSenderResidnet)) {
-				throw new CivException("Only Mayors can remove members to the mayors group.");
-			} 
+				throw new CivException("Only Mayors and leaders can remove members in the mayors group.");
+			}
 			
 			if (grp.getMemberCount() == 1) {
 				throw new CivException("There must be at least one member in the mayors group.");
@@ -117,7 +120,6 @@ public class TownGroupCommand extends CommandBase {
 		
 		grp.removeMember(oldMember);
 		grp.save();
-		
 		CivMessage.sendSuccess(sender, "Removed "+oldMember.getName()+" from group "+grp.getName()+" in town "+town.getName());
 		
 		try {
@@ -214,5 +216,4 @@ public class TownGroupCommand extends CommandBase {
 	public void doDefaultAction() {
 		showHelp();
 	}
-
 }

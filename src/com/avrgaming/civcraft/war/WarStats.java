@@ -1,31 +1,24 @@
-package com.avrgaming.civcraft.war;
+package com.civcraft.war;
 
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.avrgaming.civcraft.object.Civilization;
-import com.avrgaming.civcraft.object.Town;
-import com.avrgaming.civcraft.util.CivColor;
+import com.civcraft.object.Civilization;
+import com.civcraft.object.Town;
+import com.civcraft.util.CivColor;
 
 public class WarStats {
 
 	/* Lets keep track of some basic stats. */
-	
-	/*
-	 * Stores player kills.
-	 */
+	/* Stores player kills. */
 	private static HashMap<String, Integer> playerKills = new HashMap<String, Integer>();
 	
-	/*
-	 * Stores Captured Civs, who conquered whom.
-	 * key = civ who conquered, value = civ who was defeated.
-	 */
+	/* Stores Captured Civs, who conquered whom.
+	 * key = civ who conquered, value = civ who was defeated. */
 	private static HashMap<String, LinkedList<String>> conqueredCivs = new HashMap<String, LinkedList<String>>();
 	
-	/*
-	 * Conquered Towns, key = civ who conquered, value = town
-	 */
+	/*  Conquered Towns, key = civ who conquered, value = town */
 	private static HashMap<String, LinkedList<String>> conqueredTowns = new HashMap<String, LinkedList<String>>();
 	
 	public static void incrementPlayerKills(String playerName) {
@@ -35,7 +28,6 @@ public class WarStats {
 		} else {
 			kills++;
 		}
-		
 		playerKills.put(playerName, kills);
 	}
 	
@@ -62,7 +54,6 @@ public class WarStats {
 	}
 	
 	public static String getTopKiller() {
-		
 		String out = "";
 		int mostKills = 0;
 		for (String playerName : playerKills.keySet()) {
@@ -72,7 +63,6 @@ public class WarStats {
 				mostKills = kills;
 			}
 		}
-		
 		return CivColor.LightGreen+CivColor.BOLD+out+CivColor.LightGray+" ("+mostKills+" kills)";
 	}
 	

@@ -16,15 +16,15 @@
  * is strictly forbidden unless prior written permission is obtained
  * from AVRGAMING LLC.
  */
-package com.avrgaming.civcraft.main;
+package com.civcraft.main;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 
-import com.avrgaming.civcraft.exception.InvalidBlockLocation;
-import com.avrgaming.civcraft.util.BlockSnapshot;
-import com.avrgaming.civcraft.util.ItemManager;
+import com.civcraft.exception.InvalidBlockLocation;
+import com.civcraft.util.BlockSnapshot;
+import com.civcraft.util.ItemManager;
 
 public class CivData {
 	//TODO make this an enum
@@ -41,8 +41,25 @@ public class CivData {
 	public static final byte DATA_JUNGLE = 3;
 	
 	
+	public static final int STONE = 1;
+	public static final byte GRANITE = 1;
+	public static final byte POLISHED_GRANITE = 2;
+	public static final byte DIORITE = 3;
+	public static final byte POLISHED_DIORITE = 4;
+	public static final byte ANDESITE = 5;
+	public static final byte POLISHED_ANDESITE = 6;
+	public static final int DIRT = 3;
 	public static final int GOLD_ORE = 14;
 	public static final int IRON_ORE = 15;
+	public static final int DYE = 351;
+	public static final byte LAPIS = 4;
+	public static final int FISHING_ROD = 346;
+	public static final int FISH = 349;
+	public static final byte SALMON = 1;
+	public static final byte CLOWNFISH = 2;
+	public static final byte PUFFERFISH = 3;
+	public static final int PUMPKIN_PIE = 400;
+	
 	public static final int IRON_INGOT = 265;
 	public static final int GOLD_INGOT = 266;
 	public static final int WATER = 9;
@@ -95,10 +112,8 @@ public class CivData {
 	public static final int COOKED_FISH = 350;
 	public static final int OBSIDIAN = 49;
 	public static final int FIRE = 51;
-	public static final int FISH_RAW = 349;
 	public static final int BREAD = 297;
 	public static final int GLOWSTONE = 89;
-	public static final int DYE = 351;
 	public static final int REDSTONE_TORCH_OFF = 75;
 	public static final int STONE_BRICK = 98;
 
@@ -161,14 +176,11 @@ public class CivData {
 	public static final int ANVIL = 145;
 	public static final int IRON_BLOCK = 42;
 	public static final int COBWEB = 30;
-	public static final int STONE = 1;
 	public static final short MUNDANE_POTION_DATA = 8192;
 	public static final short MUNDANE_POTION_EXT_DATA = 64;
 	public static final short THICK_POTION_DATA = 32;
 	public static final short DATA_WOOL_RED = 14;
 	public static final int DATA_WOOL_WHITE = 0;
-	public static final int CLOWNFISH = 2;
-	public static final int PUFFERFISH = 3;
 	public static final int GOLDEN_APPLE = 322;
 	public static final int TNT = 46;
 	

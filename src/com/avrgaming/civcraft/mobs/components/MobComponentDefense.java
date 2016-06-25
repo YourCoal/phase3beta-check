@@ -1,11 +1,11 @@
-package com.avrgaming.civcraft.mobs.components;
+package com.civcraft.mobs.components;
 
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
-import com.avrgaming.civcraft.main.CivMessage;
-import com.avrgaming.civcraft.util.CivColor;
+import com.civcraft.main.CivMessage;
+import com.civcraft.util.CivColor;
 
 public class MobComponentDefense extends MobComponent {
 

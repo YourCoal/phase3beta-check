@@ -1,43 +1,23 @@
-/*************************************************************************
- * 
- * AVRGAMING LLC
- * __________________
- * 
- *  [2013] AVRGAMING LLC
- *  All Rights Reserved.
- * 
- * NOTICE:  All information contained herein is, and remains
- * the property of AVRGAMING LLC and its suppliers,
- * if any.  The intellectual and technical concepts contained
- * herein are proprietary to AVRGAMING LLC
- * and its suppliers and may be covered by U.S. and Foreign Patents,
- * patents in process, and are protected by trade secret or copyright law.
- * Dissemination of this information or reproduction of this material
- * is strictly forbidden unless prior written permission is obtained
- * from AVRGAMING LLC.
- */
-package com.avrgaming.civcraft.command.admin;
-
-import java.sql.SQLException;
+package com.civcraft.command.admin;
 
 import org.bukkit.ChatColor;
 
-import com.avrgaming.civcraft.command.CommandBase;
-import com.avrgaming.civcraft.command.civ.CivInfoCommand;
-import com.avrgaming.civcraft.config.CivSettings;
-import com.avrgaming.civcraft.config.ConfigGovernment;
-import com.avrgaming.civcraft.config.ConfigTech;
-import com.avrgaming.civcraft.endgame.EndConditionDiplomacy;
-import com.avrgaming.civcraft.exception.CivException;
-import com.avrgaming.civcraft.exception.InvalidNameException;
-import com.avrgaming.civcraft.main.CivGlobal;
-import com.avrgaming.civcraft.main.CivMessage;
-import com.avrgaming.civcraft.object.Civilization;
-import com.avrgaming.civcraft.object.Relation;
-import com.avrgaming.civcraft.object.Relation.Status;
-import com.avrgaming.civcraft.object.Resident;
-import com.avrgaming.civcraft.object.Town;
-import com.avrgaming.civcraft.util.CivColor;
+import com.civcraft.command.CommandBase;
+import com.civcraft.command.civ.CivInfoCommand;
+import com.civcraft.config.CivSettings;
+import com.civcraft.config.ConfigGovernment;
+import com.civcraft.config.ConfigTech;
+import com.civcraft.endgame.EndConditionDiplomacy;
+import com.civcraft.exception.CivException;
+import com.civcraft.exception.InvalidNameException;
+import com.civcraft.main.CivGlobal;
+import com.civcraft.main.CivMessage;
+import com.civcraft.object.Civilization;
+import com.civcraft.object.Relation;
+import com.civcraft.object.Relation.Status;
+import com.civcraft.object.Resident;
+import com.civcraft.object.Town;
+import com.civcraft.util.CivColor;
 
 public class AdminCivCommand extends CommandBase {
 
@@ -46,11 +26,13 @@ public class AdminCivCommand extends CommandBase {
 		command = "/ad civ";
 		displayName = "Admin civ";
 		
-		commands.put("disband", "[civ] - disbands this civilization");
+//		commands.put("disband", "[civ] - disbands this civilization");
 		commands.put("addleader", "[civ] [player] - adds this player to the leaders group.");
-		commands.put("addadviser", "[civ] [player] - adds this player to the advisers group.");
+		commands.put("adddipadviser", "[civ] [player] - adds this player to the dip advisers group.");
+		commands.put("addeconadviser", "[civ] [player] - adds this player to the econ advisers group.");
 		commands.put("rmleader", "[civ] [player] - removes this player from the leaders group.");
-		commands.put("rmadviser", "[civ] [player] - removes this player from the advisers group.");
+		commands.put("rmdipadviser", "[civ] [player] - removes this player from the dip advisers group.");
+		commands.put("rmeconadviser", "[civ] [player] - removes this player from the econ advisers group.");
 		commands.put("givetech", "[civ] [tech_id] - gives this civilization this technology.");
 		commands.put("beakerrate", "[civ] [amount] set this towns's beaker rate to this amount.");
 		commands.put("toggleadminciv", "[civ] - sets/unsets this civilization to an admin civ. Prevents war.");
@@ -292,16 +274,29 @@ public class AdminCivCommand extends CommandBase {
 		
 	}
 	
-	public void rmadviser_cmd() throws CivException {
+	public void rmdipadviser_cmd() throws CivException {
 		Civilization civ = getNamedCiv(1);
 		Resident resident = getNamedResident(2);
 		
-		if (civ.getAdviserGroup().hasMember(resident)) {
-			civ.getAdviserGroup().removeMember(resident);
+		if (civ.getDipAdviserGroup().hasMember(resident)) {
+			civ.getDipAdviserGroup().removeMember(resident);
 			civ.save();
-			CivMessage.sendSuccess(sender, "Removed "+resident.getName()+" to advisers group in "+civ.getName());
+			CivMessage.sendSuccess(sender, "Removed "+resident.getName()+" to dip advisers group in "+civ.getName());
 		} else {
-			CivMessage.sendError(sender, resident.getName()+" is not currently in the advisers group for "+civ.getName());
+			CivMessage.sendError(sender, resident.getName()+" is not currently in the dip advisers group for "+civ.getName());
+		}
+	}
+	
+	public void rmeconadviser_cmd() throws CivException {
+		Civilization civ = getNamedCiv(1);
+		Resident resident = getNamedResident(2);
+		
+		if (civ.getEconAdviserGroup().hasMember(resident)) {
+			civ.getEconAdviserGroup().removeMember(resident);
+			civ.save();
+			CivMessage.sendSuccess(sender, "Removed "+resident.getName()+" to econ advisers group in "+civ.getName());
+		} else {
+			CivMessage.sendError(sender, resident.getName()+" is not currently in the econ advisers group for "+civ.getName());
 		}
 	}
 	
@@ -318,15 +313,26 @@ public class AdminCivCommand extends CommandBase {
 		}
 	}
 	
-	public void addadviser_cmd() throws CivException {
+	public void adddipadviser_cmd() throws CivException {
 		Civilization civ = getNamedCiv(1);
 		Resident resident = getNamedResident(2);
 		
-		civ.getAdviserGroup().addMember(resident);
-		civ.getAdviserGroup().save();
+		civ.getDipAdviserGroup().addMember(resident);
+		civ.getDipAdviserGroup().save();
 		civ.save();
 		
-		CivMessage.sendSuccess(sender, "Added "+resident.getName()+" to advisers group in "+civ.getName());
+		CivMessage.sendSuccess(sender, "Added "+resident.getName()+" to dip advisers group in "+civ.getName());
+	}
+	
+	public void addeconadviser_cmd() throws CivException {
+		Civilization civ = getNamedCiv(1);
+		Resident resident = getNamedResident(2);
+		
+		civ.getEconAdviserGroup().addMember(resident);
+		civ.getEconAdviserGroup().save();
+		civ.save();
+		
+		CivMessage.sendSuccess(sender, "Added "+resident.getName()+" to econ advisers group in "+civ.getName());
 	}
 
 	public void addleader_cmd() throws CivException {
@@ -340,18 +346,18 @@ public class AdminCivCommand extends CommandBase {
 		CivMessage.sendSuccess(sender, "Added "+resident.getName()+" to leaders group in "+civ.getName());
 	}
 	
-	public void disband_cmd() throws CivException {
-		Civilization civ = getNamedCiv(1);
-		
-		CivMessage.sendCiv(civ, "Your civ is has disbanded by an admin!");
-		try {
-			civ.delete();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		
-		CivMessage.sendSuccess(sender, "Civ disbanded");
-	}
+//	public void disband_cmd() throws CivException {
+//		Civilization civ = getNamedCiv(1);
+//		
+//		CivMessage.sendCiv(civ, "Your civ is has disbanded by an admin!");
+//		try {
+//			civ.delete();
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//		}
+//		
+//		CivMessage.sendSuccess(sender, "Civ disbanded");
+//	}
 	
 	@Override
 	public void doDefaultAction() throws CivException {
